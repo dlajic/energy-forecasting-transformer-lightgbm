@@ -1,174 +1,136 @@
+# Energy Forecasting with Transformer and LightGBM
 
-# ⚡️ Energy Forecasting with Transformer & LightGBM
+This project addresses the forecasting of urban energy consumption using historical temperature and usage data from Chicago. Two model architectures are implemented and compared: a Transformer-based neural network and a LightGBM ensemble model.
 
-Ein Machine-Learning-Projekt zur Vorhersage des städtischen Energieverbrauchs auf Basis von Wetter- und Verbrauchsdaten aus Chicago. Zwei Modellansätze wurden implementiert und verglichen: ein Transformer-Modell (Deep Learning) und ein LightGBM-Modell (Gradient Boosting).
+## Project Overview
 
----
+- **Goal**: Predict hourly energy consumption using time and temperature data.
+- **Data Source**: Publicly available electricity and weather datasets from Chicago.
+- **Methods**: Data preprocessing, feature engineering, model training and evaluation, interactive prediction via Streamlit dashboard.
+- **Models Used**: Transformer (PyTorch) and LightGBM (scikit-learn interface).
+- **Reproducibility**: Modular scripts and notebooks for each pipeline stage.
 
-## 📸 Live-Demo
+## Results
 
-> ✨ **Live-Dashboard**:  
-> 👉 [Streamlit App starten](https://your-deployment-link.com)  
->  
-> ![Demo](assets/demo.gif)
+| Model       | RMSE     | MAE      | MAPE     |
+|-------------|----------|----------|----------|
+| Transformer | XX.XX    | XX.XX    | XX.XX %  |
+| LightGBM    | XX.XX    | XX.XX    | XX.XX %  |
 
----
+- The Transformer model performed better on long-term patterns and sequences.
+- LightGBM was more robust to noise and required less computational effort.
+- All results are documented in `lightgbm_model/results/` and `transformer_model/results/`.
 
-## 📂 Projektüberblick
+## Live Demo
 
-- **Ziel**: Zeitreihen-Vorhersage des Energieverbrauchs auf Basis von Temperaturdaten.
-- **Daten**: Öffentliche Verbrauchs- und Temperaturdaten aus Chicago.
-- **Modelle**: Transformer (PyTorch) & LightGBM (Scikit-Learn).
-- **Workflow**: Datenaufbereitung → Feature Engineering → Modelltraining → Evaluation → Deployment mit Streamlit.
+You can try the model predictions interactively in the Streamlit dashboard:
 
----
+**🔗 [Launch Streamlit App](https://your-streamlit-url.streamlit.app)**
 
-## 📈 Ergebnisse
+(Optional) Preview:
 
-| Modell      | RMSE     | MAE      | MAPE    |
-|-------------|----------|----------|---------|
-| Transformer | XX.XX    | XX.XX    | XX.X %  |
-| LightGBM    | XX.XX    | XX.XX    | XX.X %  |
+![Streamlit Dashboard Preview](assets/dashboard_preview.gif)
 
-- Transformer zeigt Vorteile bei langfristigen Trends.
-- LightGBM ist robuster bei begrenzten Daten und schneller im Training.
-
-> 📊 Siehe Vergleichsplots in `lightgbm_model/results/` und `transformer_model/results/`
-
----
-
-## 🧠 Modellarchitektur & Parameterwahl
+## Model Development
 
 ### Transformer
-- Multi-Head Attention, Positional Encoding, Dropout
-- Getestete Varianten: Embedding-Typen, Weight Decay, Dropout-Raten
-- Trainings-Monitoring: `training_plot.png`, Metriken als JSON
+
+- Implemented in PyTorch with positional encoding and multi-head attention.
+- Variants tested: embedding types, weight decay, dropout levels.
+- Training performance and evaluation metrics are saved in the results folder.
 
 ### LightGBM
-- Extensive Gridsearch: `num_leaves`, `min_child_samples`, `learning_rate`, u.v.m.
-- Feature Importance zur Reduktion irrelevanter Features
-- Learning Curves, Fehlerverläufe dokumentiert
 
----
+- Extensive hyperparameter tuning (e.g., `num_leaves`, `learning_rate`, `min_child_samples`).
+- Feature importance used for selection and reduction.
+- Evaluation includes learning curves and error plots.
 
-## 🧾 Datengrundlage
+## Data
 
-- Verbrauchsdaten: `data/raw/COMED_hourly.csv`
-- Temperaturdaten: `data/external/Temperature_chicago.csv`
-- Vorverarbeitet in: `data/processed/energy_consumption_aggregated_cleaned.csv`
+- Raw consumption data: `data/raw/COMED_hourly.csv`
+- Raw temperature data: `data/external/Temperature_chicago.csv`
+- Merged and cleaned data: `data/processed/energy_consumption_aggregated_cleaned.csv`
 
-> CSV-Format für eigene Daten:  
-> `timestamp, consumption, temperature`
+To use your own dataset, ensure it contains the following columns:
+timestamp, consumption, temperature
 
----
+## Repository Structure
 
-## 🗂️ Ordnerstruktur
-
-```bash
 energy-forecasting-transformer-lightgbm/
 │
-├── data/                     # Roh-, externe und bereinigte Daten
-│   ├── raw/
-│   ├── external/
-│   └── processed/
+├── data/
+│ ├── raw/
+│ ├── external/
+│ └── processed/
 │
-├── notebooks/               # EDA & Modellprototyping (LightGBM + Transformer)
-│   ├── eda/
-│   ├── lightgbm/
-│   └── transformer/
+├── notebooks/
+│ ├── eda/
+│ ├── lightgbm/
+│ └── transformer/
 │
-├── scripts/                 # Preprocessing & Konfiguration
-│   ├── data_preprocessing/
-│   └── config_main.py
+├── scripts/
+│ └── data_preprocessing/
 │
-├── lightgbm_model/          # LightGBM Modell, Skripte, Ergebnisse
-│   ├── model/
-│   ├── results/
-│   └── scripts/
-│       ├── train/
-│       └── eval/
+├── lightgbm_model/
+│ ├── model/
+│ ├── results/
+│ └── scripts/
+│ ├── train/
+│ └── eval/
 │
-├── transformer_model/       # Transformer-Modell inkl. Training/Eval/Utils
-│   ├── model/
-│   ├── results/
-│   └── scripts/
-│       ├── training/
-│       ├── evaluation/
-│       └── utils/
+├── transformer_model/
+│ ├── model/
+│ ├── results/
+│ └── scripts/
+│ ├── training/
+│ ├── evaluation/
+│ └── utils/
 │
-├── streamlit_simulation/    # Streamlit App zur Modellvorhersage
-│   └── app.py
+├── streamlit_simulation/
+│ └── app.py
 │
 ├── requirements.txt
 ├── requirements_lgbm.txt
 ├── setup.py
 └── README.md
-```
 
----
 
-## 🚀 Installation & Ausführung
+## Installation and Execution
 
-### Voraussetzungen
+### Prerequisites
 
 - Python ≥ 3.9
-- Virtuelle Umgebung empfohlen (z. B. `venv` oder `conda`)
+- Recommended: virtual environment (`venv` or `conda`)
 
 ### Setup
 
-```bash
 git clone https://github.com/dlajic/energy-forecasting-transformer-lightgbm.git
 cd energy-forecasting-transformer-lightgbm
 pip install -r requirements.txt
-```
 
-### Datenvorverarbeitung
+### Preprocess the Data
 
-```bash
 python scripts/data_preprocessing/preprocess_data.py
-```
+## Train Models
 
-### Modelltraining
-
-```bash
-# LightGBM
+### LightGBM
 python lightgbm_model/scripts/train/train_lightgbm.py
 
-# Transformer
+### Transformer
 python transformer_model/scripts/training/train.py
-```
 
-### Evaluation
-
-```bash
+## Evaluate Models
 python lightgbm_model/scripts/eval/eval_lightgbm.py
 python transformer_model/scripts/evaluation/evaluate.py
-```
 
-### Streamlit App starten
-
-```bash
+## Run Streamlit Dashboard
 streamlit run streamlit_simulation/app.py
-```
 
----
+## Reproducibility
+All code is modular and executable with any dataset in the required format.
 
-## 🧪 Reproduzierbarkeit
+The pipeline can be restarted from preprocessing with new input data.
 
-- Alle Schritte sind modular und automatisiert aufrufbar.
-- Eigene Daten im CSV-Format (`timestamp, consumption, temperature`) können direkt über das Preprocessing-Skript genutzt werden.
-
----
-
-## 🔭 Ausblick
-
-- [ ] Weitere Städte / Klimazonen integrieren
-- [ ] Modell-Deployment als REST API (z. B. mit FastAPI)
-- [ ] Automatisierte Hyperparameteroptimierung (Optuna)
-
----
-
-## 👤 Autor
-
-**Damir Lajic**  
-[GitHub](https://github.com/dlajic) · [LinkedIn](https://www.linkedin.com/in/dein-name)
+## Author
+Dean Lajic
+GitHub: https://github.com/dlajic
