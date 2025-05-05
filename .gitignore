@@ -1,0 +1,14 @@
+# VSCode-Einstellungen
+.vscode/
+
+# Python-Cache-Dateien
+__pycache__/
+*.pyc
+
+# Build-Ordner von Python-Paketen
+*.egg-info/
+build/
+dist/
+
+# Notebook-Checkpoints
+.ipynb_checkpoints/
