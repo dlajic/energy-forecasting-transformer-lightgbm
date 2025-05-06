@@ -288,7 +288,7 @@ col1, col2 = st.columns([1, 1])
 
 with col1:
     st.markdown("**General Settings**")
-    model_choice = st.selectbox("Choose prediction model", ["LightGBM", "Transformer Model(moments)"])
+    model_choice = st.selectbox("Choose prediction model", ["LightGBM", "Transformer Model (moments)"])
     if model_choice == "Transformer Model(moments)":
         st.caption("⚠️ Note: Transformer model runs slower without GPU. (Use Speed = 10)")
     window_days = st.selectbox("Display window (days)", options=[3, 5, 7], index=0)
