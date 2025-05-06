@@ -1,0 +1,2 @@
+[general]
+requirementsFile = "requirements_streamlit.txt"
