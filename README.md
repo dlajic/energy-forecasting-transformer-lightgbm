@@ -25,7 +25,7 @@ This project addresses the forecasting of urban energy consumption using histori
 
 You can try the model predictions interactively in the Streamlit dashboard:
 
-**🔗 [Launch Streamlit App](https://your-streamlit-url.streamlit.app)**
+**🔗 [Launch Streamlit App](https://huggingface.co/spaces/dlaj/energy-forecasting-demo)**
 
 (Optional) Preview:
 
