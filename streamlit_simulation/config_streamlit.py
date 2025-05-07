@@ -20,7 +20,7 @@ BUTTON_HOVER_BG = "#cbd9e6"    # Hover color for buttons
 BG_COLOR = "#ffffff"           # Page background
 INPUT_BG = "#f2f6fa"           # Background for select boxes, inputs
 PROGRESS_COLOR = "#0077B6"     # Progress bar color
-PLOT_COLOR = "white"           # Plot background color
+PLOT_COLOR = "#edf1f7"           # Plot background color
 
 # Constants
 TRAIN_RATIO = 0.7  # Train/test split ratio used by both models

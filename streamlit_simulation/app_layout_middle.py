@@ -85,23 +85,28 @@ st.markdown(f"""
         .stSelectbox label, .stSelectbox div {{
             color: {TEXT_COLOR} !important;
         }}
+
         
-        /* Entfernt auch den leeren Platz über der App */
-        header[data-testid="stHeader"] {{
-            display: none !important;
-            height: 0px !important;
-            visibility: hidden !important;
-        }}
-
-        .block-container {{
-            padding-top: 0.5rem !important; 
-        }}
-
     </style>
 """, unsafe_allow_html=True)
 
-st.title("Electricity Consumption Forecast: Hourly Simulation")
-st.write("Welcome to the simulation interface!")
+#st.title("Electricity Consumption Forecast: Hourly Simulation")
+#st.write("Welcome to the simulation interface!")
+
+st.markdown(
+    f"""
+    <h1 style='text-align: center; color: {HEADER_COLOR};'>
+        Electricity Consumption Forecast: Hourly Simulation
+    </h1>
+    <p style='text-align: center; font-size: 16px; color: {TEXT_COLOR};'>
+        Welcome to the simulation interface!
+    </p>
+    <h3 style='text-align: center; color: {HEADER_COLOR}; margin-bottom: 1rem;'>
+        Start Simulation
+    </h3>
+    """,
+    unsafe_allow_html=True
+)
 
 # ============================== Session State Init ==============================
 def init_session_state():
@@ -227,13 +232,19 @@ def render_simulation_view(timestamp, prediction, actual, progress, fig, paused=
     plot_container.pyplot(fig)
 
     #st.markdown("<div style='margin-bottom: 0.5rem;'></div>", unsafe_allow_html=True)
-    #x_axis_label.markdown(f"<div style='text-align: center; font-size: 13pt; color: {TEXT_COLOR}; margin-top: -0.5rem;'>"f"Time</div>",unsafe_allow_html=True)
+    x_axis_label.markdown(
+        f"<div style='text-align: center; font-size: 13pt; color: {TEXT_COLOR}; margin-top: -0.5rem;'>"
+        f"Time</div>",
+        unsafe_allow_html=True
+    )
 
     with info_container.container():
+        st.markdown("<div style='margin-top: 5rem;'></div>", unsafe_allow_html=True)
         st.markdown(
             f"<span style='font-size: 24px; font-weight: 600; color: {HEADER_COLOR} !important;'>Time: {timestamp}</span>",
             unsafe_allow_html=True
         )
+
         st.metric("Prediction", f"{prediction:,.0f} MW" if prediction is not None else "–")
         st.metric("Actual", f"{actual:,.0f} MW" if actual is not None else "–")
         st.caption("Simulation Progress")
@@ -242,7 +253,8 @@ def render_simulation_view(timestamp, prediction, actual, progress, fig, paused=
         if len(st.session_state.true_vals) > 1:
             true_arr = np.array(st.session_state.true_vals)
             pred_arr = np.array(st.session_state.pred_vals[:-1])
-            min_len = min(len(true_arr), len(pred_arr))
+
+            min_len = min(len(true_arr), len(pred_arr)) #just start if there are 2 actual values
             if min_len >= 1:
                 errors = np.abs(true_arr[:min_len] - pred_arr[:min_len])
                 mape = np.mean(errors / np.where(true_arr[:min_len] == 0, 1e-10, true_arr[:min_len])) * 100
@@ -257,6 +269,8 @@ def render_simulation_view(timestamp, prediction, actual, progress, fig, paused=
                 st.metric("MAPE (so far)", f"{mape:.2f} %")
                 st.metric("MAE (so far)", f"{mae:,.0f} MW")
                 st.metric("Max Error", f"{max_error:,.0f} MW")
+
+
 
 # ============================== Data Preparation ==============================
 
@@ -304,15 +318,15 @@ total_steps_ui = len(test_df_filtered)
 
 # ============================== Buttons ==============================
 
-st.markdown("### Start Simulation")
-col1, col2, col3 = st.columns([1, 1, 4])
-with col1:
+#st.markdown("### Start Simulation")
+col1, col2, col3, col4 = st.columns([6.5, 2, 2, 6])
+with col2:
     play_pause_text = "▶️ Start" if not st.session_state.is_running else "⏸️ Pause"
-    if st.button(play_pause_text, use_container_width=True):
+    if st.button(play_pause_text):
         st.session_state.is_running = not st.session_state.is_running
         st.rerun()
-with col2:
-    reset_button = st.button("🔄 Reset", use_container_width=True)
+with col3:
+    reset_button = st.button("🔄 Reset")
 
 # Reset logic
 if reset_button:
@@ -346,6 +360,10 @@ st.session_state.last_start_date = start_date
 st.session_state.last_end_date = end_date
 st.session_state.last_model_choice = model_choice
 
+# Fortschrittsanzeige mittig unter Buttons
+st.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
+st.progress(st.session_state.start_index / total_steps_ui if total_steps_ui else 0.0)
+st.markdown("</div>", unsafe_allow_html=True)
 
 # ============================== Paused Mode ==============================
 

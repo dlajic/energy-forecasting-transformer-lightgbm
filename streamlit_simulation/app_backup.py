@@ -86,17 +86,6 @@ st.markdown(f"""
             color: {TEXT_COLOR} !important;
         }}
         
-        /* Entfernt auch den leeren Platz über der App */
-        header[data-testid="stHeader"] {{
-            display: none !important;
-            height: 0px !important;
-            visibility: hidden !important;
-        }}
-
-        .block-container {{
-            padding-top: 0.5rem !important; 
-        }}
-
     </style>
 """, unsafe_allow_html=True)
 
@@ -227,7 +216,11 @@ def render_simulation_view(timestamp, prediction, actual, progress, fig, paused=
     plot_container.pyplot(fig)
 
     #st.markdown("<div style='margin-bottom: 0.5rem;'></div>", unsafe_allow_html=True)
-    #x_axis_label.markdown(f"<div style='text-align: center; font-size: 13pt; color: {TEXT_COLOR}; margin-top: -0.5rem;'>"f"Time</div>",unsafe_allow_html=True)
+    x_axis_label.markdown(
+        f"<div style='text-align: center; font-size: 13pt; color: {TEXT_COLOR}; margin-top: -0.5rem;'>"
+        f"Time</div>",
+        unsafe_allow_html=True
+    )
 
     with info_container.container():
         st.markdown(
