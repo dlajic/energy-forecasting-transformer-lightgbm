@@ -10,11 +10,7 @@ import matplotlib.dates as mdates
 import warnings
 import torch
 
-from config_streamlit import (MODEL_PATH_LIGHTGBM, DATA_PATH, TRAIN_RATIO,
-                             TEXT_COLOR, HEADER_COLOR, ACCENT_COLOR,
-                             BUTTON_BG, BUTTON_HOVER_BG, BG_COLOR,
-                             INPUT_BG, PROGRESS_COLOR, PLOT_COLOR
-                             )
+from config_streamlit import (MODEL_PATH_LIGHTGBM, DATA_PATH, TRAIN_RATIO, PLOT_COLOR)
 from lightgbm_model.scripts.config_lightgbm import FEATURES
 from transformer_model.scripts.utils.informer_dataset_class import InformerDataset
 from transformer_model.scripts.training.load_basis_model import load_moment_model
@@ -31,61 +27,10 @@ st.set_page_config(page_title="Electricity Consumption Forecast", layout="wide")
 #CSS part
 st.markdown(f"""
     <style>
-        body, .block-container {{
-            background-color: {BG_COLOR} !important;
-        }}
-
-        html, body, [class*="css"] {{
-            color: {TEXT_COLOR} !important;
-            font-family: 'sans-serif';
-        }}
-        
-        h1, h2, h3, h4, h5, h6 {{
-            color: {HEADER_COLOR} !important;
-        }}
-
         .stButton > button {{
-            background-color: {BUTTON_BG};
-            color: {TEXT_COLOR};
-            border: 1px solid {ACCENT_COLOR};
+            background-color: {PLOT_COLOR};
         }}
 
-        .stButton > button:hover {{
-            background-color: {BUTTON_HOVER_BG};
-        }}
-
-        .stSelectbox div[data-baseweb="select"],
-        .stDateInput input {{
-            color: {TEXT_COLOR} !important;
-        }}
-
-        [data-testid="stMetricLabel"],
-        [data-testid="stMetricValue"] {{
-            color: {TEXT_COLOR} !important;
-        }}
-
-        .stMarkdown p {{
-            color: {TEXT_COLOR} !important;
-        }}
-
-        .stDataFrame tbody tr td {{
-            color: {TEXT_COLOR} !important;
-        }}
-
-        .stProgress > div > div {{
-            background-color: {PROGRESS_COLOR} !important;
-        }}
-
-        /* Alle Label-Texte für Inputs/Sliders */
-        label {{
-            color: {TEXT_COLOR} !important;
-        }}
-
-        /* Text in selectbox-Optionsfeldern */
-        .stSelectbox label, .stSelectbox div {{
-            color: {TEXT_COLOR} !important;
-        }}
-        
         /* Entfernt auch den leeren Platz über der App */
         header[data-testid="stHeader"] {{
             display: none !important;
@@ -100,8 +45,18 @@ st.markdown(f"""
     </style>
 """, unsafe_allow_html=True)
 
+
 st.title("Electricity Consumption Forecast: Hourly Simulation")
 st.write("Welcome to the simulation interface!")
+st.info(
+    "**Simulation Overview:**\n\n"
+    "This dashboard provides an hourly electricity consumption forecast using two different models: "
+    "**LightGBM** and a **Transformer (moment-based)**. Both models generate a fresh prediction at every time step "
+    "(i.e., every simulated hour).\n\n"
+    "Note: Since this app runs on a limited CPU on Hugging Face Spaces, the Transformer model may respond slower "
+    "compared to local execution. On a standard local CPU, performance is significantly better."
+)
+
 
 # ============================== Session State Init ==============================
 def init_session_state():
@@ -113,7 +68,8 @@ def init_session_state():
         "true_timestamps": [],
         "pred_timestamps": [],
         "last_fig": None,
-        "valid_pos": 0
+        "valid_pos": 0,
+        "first_plot_shown": False
     }
     for key, value in defaults.items():
         if key not in st.session_state:
@@ -192,21 +148,21 @@ def create_prediction_plot(pred_timestamps, pred_vals, true_timestamps, true_val
     if true_vals:
         ax.plot(true_timestamps[-window_hours:], true_vals[-window_hours:], label="Actual", color="#0077B6")
 
-    ax.set_ylabel("Consumption (MW)", fontsize=8, color=TEXT_COLOR)
+    ax.set_ylabel("Consumption (MW)", fontsize=8)
     ax.legend(
     fontsize=8,
     loc="upper left",
     bbox_to_anchor=(0, 0.95),
-    facecolor= INPUT_BG,    # INPUT_BG
-    edgecolor= ACCENT_COLOR,    # ACCENT_COLOR
-    labelcolor= TEXT_COLOR    # TEXT_COLOR
+    #facecolor= INPUT_BG,    # INPUT_BG
+    #edgecolor= ACCENT_COLOR,    # ACCENT_COLOR
+    #labelcolor= TEXT_COLOR    # TEXT_COLOR
     )
     ax.yaxis.grid(True, linestyle=':', linewidth=0.5, alpha=0.7)
     ax.set_ylim(y_min, y_max)
     ax.xaxis.set_major_locator(mdates.DayLocator(interval=1))
     ax.xaxis.set_major_formatter(mdates.DateFormatter("%m-%d"))
-    ax.tick_params(axis="x", labelrotation=0, labelsize=5, colors=TEXT_COLOR)
-    ax.tick_params(axis="y", labelsize=5, colors=TEXT_COLOR)
+    ax.tick_params(axis="x", labelrotation=0, labelsize=5)
+    ax.tick_params(axis="y", labelsize=5)
     #fig.patch.set_facecolor('#e6ecf0')  # outer area
 
     for spine in ax.spines.values():
@@ -220,7 +176,7 @@ def render_simulation_view(timestamp, prediction, actual, progress, fig, paused=
     """Displays the simulation plot and metrics in the UI."""
     title = "Actual vs. Prediction (Paused)" if paused else "Actual vs. Prediction"
     plot_title.markdown(
-        f"<div style='text-align: center; font-size: 20pt; font-weight: bold; color: {TEXT_COLOR}; margin-bottom: -0.7rem; margin-top: 0rem;'>"
+        f"<div style='text-align: center; font-size: 20pt; font-weight: bold; margin-bottom: -0.7rem; margin-top: 0rem;'>"
         f"{title}</div>",
         unsafe_allow_html=True
     )
@@ -231,7 +187,7 @@ def render_simulation_view(timestamp, prediction, actual, progress, fig, paused=
 
     with info_container.container():
         st.markdown(
-            f"<span style='font-size: 24px; font-weight: 600; color: {HEADER_COLOR} !important;'>Time: {timestamp}</span>",
+            f"<span style='font-size: 24px; font-weight: 600;'>Time: {timestamp}</span>",
             unsafe_allow_html=True
         )
         st.metric("Prediction", f"{prediction:,.0f} MW" if prediction is not None else "–")
@@ -251,7 +207,7 @@ def render_simulation_view(timestamp, prediction, actual, progress, fig, paused=
 
                 st.divider()
                 st.markdown(
-                    f"<span style='font-size: 24px; font-weight: 600; color: {HEADER_COLOR} !important;'>Interim Metrics</span>",
+                    f"<span style='font-size: 24px; font-weight: 600; '>Interim Metrics</span>",
                     unsafe_allow_html=True
                 )
                 st.metric("MAPE (so far)", f"{mape:.2f} %")
@@ -324,6 +280,7 @@ if reset_button:
     st.session_state.last_fig = None
     st.session_state.is_running = False
     st.session_state.valid_pos = 0
+    st.session_state.first_plot_shown = False
     st.rerun()
 
 # Auto-reset on critical parameter change while running
@@ -339,6 +296,7 @@ if st.session_state.is_running and (
     st.session_state.true_timestamps = []
     st.session_state.last_fig = None
     st.session_state.valid_pos = 0
+    st.session_state.first_plot_shown = False
     st.rerun()
 
 # Track current selections for change detection
@@ -419,13 +377,17 @@ if model_choice == "LightGBM" and st.session_state.is_running:
     st.success("Simulation completed!")
 
 
-
 # ============================== Transformer Simulation ==============================
+
+spinner_placeholder = st.empty()
 
 if model_choice == "Transformer Model (moments)":
     if st.session_state.is_running:
         st.write("Simulation started (Transformer)...")
         st.markdown('<div id="simulation"></div>', unsafe_allow_html=True)
+
+        if not st.session_state.first_plot_shown:
+            spinner_placeholder.markdown("Running first prediction – please wait...")
 
         plot_title, plot_container, x_axis_label, info_container = init_simulation_layout()
 
@@ -501,6 +463,9 @@ if model_choice == "Transformer Model (moments)":
             )
             if len(pred_vals) >= 2 and len(true_vals) >= 1:
                 render_simulation_view(current_time, current_pred, actual_val if i >= 1 else None, st.session_state.valid_pos / total_steps, fig)
+                if not st.session_state.first_plot_shown:
+                    spinner_placeholder.empty()
+                    st.session_state.first_plot_shown = True
 
             plt.close(fig)  # Speicher freigeben
 
