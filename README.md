@@ -29,7 +29,7 @@ You can try the model predictions interactively in the Streamlit dashboard:
 
 (Optional) Preview:
 
-![Streamlit Dashboard Preview](assets/dashboard_preview.gif)
+![Streamlit Dashboard Preview](assets/streamlit_preview.gif)
 
 ## Model Development
 
