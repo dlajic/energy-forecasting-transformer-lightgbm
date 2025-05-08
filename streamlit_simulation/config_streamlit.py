@@ -12,7 +12,7 @@ MODEL_PATH_TRANSFORMER = os.path.join(BASE_DIR, "transformer_model", "model", "c
 DATA_PATH = os.path.join(BASE_DIR, "data", "processed", "energy_consumption_aggregated_cleaned.csv")
 
 # Color palette for Streamlit layout
-PLOT_COLOR = "#e4eaf0"          # Plot background color
+PLOT_COLOR = "#edf1f7"          # Plot background color
 
 # Constants
 TRAIN_RATIO = 0.7  # Train/test split ratio used by both models
