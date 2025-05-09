@@ -18,42 +18,62 @@ The project also simulates a real-time setting, where hourly predictions are mad
 
 ## Results
 
+### Evaluation Metrics
+
 | Model       | RMSE    | R²    | MAPE   |
 | ----------- | ------- | ----- | ------ |
 | Transformer | 3933.57 | 0.972 | 2.32 % |
 | LightGBM    | 1383.68 | 0.996 | 0.84 % |
 
-*Note: All values are in megawatts (MW). Hourly consumption typically ranges from 100,000 to 200,000 MW.*
+> **Note:** All values are in megawatts (MW). Hourly consumption typically ranges from 100,000 to 200,000 MW.
 
-* LightGBM achieves the best trade-off between performance and resource efficiency.
-* The Transformer model generalizes well to temporal patterns and may scale better in more complex or multi-network scenarios.
+* LightGBM achieves the best trade-off between performance and resource efficiency.  
+* The Transformer model generalizes well to temporal patterns and may scale better in more complex or multi-network scenarios.  
 * Both models show no signs of overfitting, validated by learning curves and consistent evaluation metrics.
 
-### Visualizations
+---
 
-|                     LightGBM Feature Importance                     |                     Transformer Learning Curve                    |
-| :-----------------------------------------------------------------: | :---------------------------------------------------------------: |
-| ![Feature Importance](assets/plots/feature_importance_lightgbm.png) | ![Transformer Curve](assets/plots/transformer_learning_curve.png) |
+### Forecast Plots
 
-More plots are available in `notebooks/`.
+| LightGBM Prediction Plot | Transformer Prediction Plot |
+| :----------------------: | :--------------------------: |
+| ![LightGBM Prediction](assets/lightgbm_prediction_with_timestamp.png) | ![Transformer Prediction](assets/comparison_plot_1month.png) |
+
+> **Note:** Example forecast windows are shown (LightGBM: 3 months, Transformer: 1 month).  
+> LightGBM maintains highly consistent performance over time, while the Transformer shows occasional over- or underestimation on special peak days.
+
+---
+
+### Learning Curves
+
+These plots visualize training dynamics and help detect overfitting.
+
+| LightGBM Learning Curve | Transformer Learning Curve |
+| :----------------------: | :------------------------: |
+| ![LightGBM LC](assets/lightgbm_learning_curve.png) | ![Transformer LC](assets/training_plot.png) |
+
+> **Note:** The LightGBM curve shows boosting rounds with validation RMSE,  
+> while the Transformer plot tracks training loss and test metrics per epoch.
+
+More plots are available in the respective `/results` directories.
 
 ---
 
 ## Streamlit Simulation Dashboard
 
 * Live hourly forecast simulation
-* Uses the trained Transformer model
+* Uses the trained models
 * Repeats predictions sequentially for each hour to simulate real-time data flow
 * Hosted on Hugging Face (CPU only, slower prediction speed)
 
 You can try the model predictions interactively in the Streamlit dashboard:
 
+**Try it here:**
+**[Launch Streamlit App](https://huggingface.co/spaces/dlaj/energy-forecasting-demo)**
+
 **Preview:**
 
 ![Streamlit Dashboard Preview](assets/streamlit_preview.gif)
-
-**Try it here:**
-**[Launch Streamlit App](https://huggingface.co/spaces/dlaj/energy-forecasting-demo)**
 
 ---
 
@@ -81,7 +101,11 @@ The models rely on timestamp and temperature data, enriched with derived time-ba
 * consumption\_yesterday
 * consumption\_last\_week
 
-Feature selection was guided by LightGBM feature importance analysis.
+Feature selection was guided by LightGBM feature importance analysis. Weak features with nearly no impact like "is_weekend" were deleted.
+
+### Final LightGBM Feature Importance
+
+![Feature Importance](assets/lightgbm_feature_importance.png) 
 
 ---
 
@@ -154,8 +178,8 @@ timestamp, consumption, temperature
 
 ### Notes:
 
-* Transformer model training is **very slow on CPU**, especially with AMD processors
-* Recommended: use **Google Colab + CUDA GPU runtime** for training
+* Transformer model training is **very slow on CPU**, also with AMD GPU
+* Recommended: use **CUDA or Google Colab + CUDA GPU runtime** for training
 * All scripts are modular and can be executed separately
 
 ---
