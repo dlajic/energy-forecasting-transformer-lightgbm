@@ -230,7 +230,7 @@ GitHub: [dlajic](https://github.com/dlajic)
 ## References
 
 - Moments Time Series Transformer  
-  https://github.com/autogluon/moment
+  https://github.com/moment-timeseries-foundation-model/moment
 - COMED Consumption Dataset  
   https://www.kaggle.com/datasets/robikscube/hourly-energy-consumption
 - NOAA Weather Data  
