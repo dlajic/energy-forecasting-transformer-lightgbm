@@ -5,7 +5,8 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import pickle
-from sklearn.metrics import mean_absolute_error, mean_squared_error
+import json
+from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 from lightgbm_model.scripts.config_lightgbm import RESULTS_DIR, MODEL_DIR, DATA_PATH
 from joblib import load
 
@@ -45,10 +46,29 @@ y_pred = model.predict(X_test)
 mae = mean_absolute_error(y_test, y_pred)
 rmse = np.sqrt(mean_squared_error(y_test, y_pred))
 mape = np.mean(np.abs((y_test.values.flatten() - y_pred) / np.where(y_test.values.flatten() == 0, 1e-10, y_test.values.flatten()))) * 100
+r2 = r2_score(y_test, y_pred)
 
 print(f"Test MAPE: {mape:.5f} %")
 print(f"Test MAE: {mae:.5f}")
 print(f"Test RMSE: {rmse:.5f}")
+print(f"Test R2: {r2:.5f}")
+
+metrics = {
+    "model": "LightGBM",
+    "MAE": round(mae, 2),
+    "RMSE": round(rmse, 2),
+    "MAPE (%)": round(mape, 2),
+    "R2": round(r2, 4),
+    "unit": "MW"
+}
+
+# Pfad setzen
+output_path = os.path.join(RESULTS_DIR, "evaluation_metrics_lightgbm.json")
+# Speichern
+with open(output_path, "w") as f:
+    json.dump(metrics, f, indent=4)
+
+print(f"Metriken gespeichert unter {output_path}")
 
 # === Feature Importance ===
 feature_importance = pd.DataFrame({
