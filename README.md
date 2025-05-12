@@ -8,11 +8,11 @@ The project also simulates a real-time setting, where hourly predictions are mad
 
 ## Overview
 
-* **Goal**: Predict hourly energy consumption using timestamp and temperature data.
-* **Models**: LightGBM (scikit-learn interface) and Transformer (PyTorch).
+* **Goal**: Predict hourly energy consumption using timestamp, temperature, and historical consumption features.
+* **Models**: LightGBM and Time Series Transformer Model (moements).
 * **Results**: Both models perform well; LightGBM achieves the best overall performance.
 * **Dashboard**: Live forecast simulation via Streamlit interface.
-* **Usage Context**: Designed for real-time, hourly prediction pipelines, suitable for production scenarios.
+* **Usage Context**: Designed for real-time, hourly prediction pipelines and adaptable to operational use cases.
 
 ---
 
@@ -29,7 +29,7 @@ The project also simulates a real-time setting, where hourly predictions are mad
 
 * LightGBM achieves the best trade-off between performance and resource efficiency.  
 * The Transformer model generalizes well to temporal patterns and may scale better in more complex or multi-network scenarios.  
-* Both models show no signs of overfitting, validated by learning curves and consistent evaluation metrics.
+* Both models show no signs of overfitting, supported by learning curves, consistent evaluation metrics, and additional diagnostics such as residual distribution analysis and noise-feature validation.
 
 ---
 
@@ -51,6 +51,10 @@ These plots visualize training dynamics and help detect overfitting.
 | LightGBM Learning Curve | Transformer Learning Curve |
 | :----------------------: | :------------------------: |
 | ![LightGBM LC](assets/lightgbm_learning_curve.png) | ![Transformer LC](assets/training_plot.png) |
+
+* The LightGBM curve shows a stable gap between training and validation RMSE, indicating low overfitting.  
+* The Transformer learning curve also converges smoothly without divergence, supporting generalizability.  
+* In addition to visual inspection, further checks like residual analysis and a noise feature test confirmed robustness.
 
 > **Note:** The LightGBM curve shows boosting rounds with validation RMSE,  
 > while the Transformer plot tracks training loss and test metrics per epoch.
@@ -104,8 +108,8 @@ The models rely on timestamp and temperature data, enriched with derived time-ba
 Feature selection was guided by LightGBM feature importance analysis. Weak features with nearly no impact like "is_weekend" were deleted.
 
 ### Final LightGBM Feature Importance
-
-![Feature Importance](assets/lightgbm_feature_importance.png) 
+ 
+<img src="assets/lightgbm_feature_importance.png" alt="Feature Importance" style="width: 80%;"/>
 
 ---
 
@@ -146,8 +150,6 @@ Overfitting was monitored using a noise feature and RMSE gaps. See grid search r
   * freeze\_embedder: True
   * freeze\_head: False
 
-Implementation based on PyTorch Lightning and Hugging Face-compatible setup.
-
 ---
 
 ## Project Structure
@@ -155,10 +157,10 @@ Implementation based on PyTorch Lightning and Hugging Face-compatible setup.
 ```
 energy-forecasting-transformer-lightgbm/
 ├── data/                   # Raw, external, processed datasets
-├── notebooks/              # EDA, lightgbm and transformer prototypes
+├── notebooks/              # EDA, lightgbm and transformer prototypes, including hyperparameter tuning and model selection
 ├── scripts/                # Data preprocessing scripts
-├── lightgbm_model/         # LightGBM model training/eval/results
-├── transformer_model/      # Transformer model training/eval/scripts
+├── lightgbm_model/         # LightGBM model, scripts, results
+├── transformer_model/      # Transformer model, scripts, results
 ├── streamlit_simulation/   # Streamlit dashboard
 ├── requirements.txt        # Main environment
 ├── requirements_lgbm.txt   # Optional for LightGBM
@@ -170,16 +172,18 @@ energy-forecasting-transformer-lightgbm/
 
 ## Reproducibility
 
-The pipeline accepts any dataset with the following structure:
+You can reuse this pipeline with any dataset, as long as it contains the following key columns:
 
 ```csv
-timestamp, consumption, temperature
+timestamp,       # hourly timestamp (e.g., "2018-01-01 14:00")
+consumption,     # energy usage (aggregated; for individual users, consider adding an ID column)
+temperature      # hourly
 ```
 
 ### Notes:
 
 * Transformer model training is **very slow on CPU**, also with AMD GPU
-* Recommended: use **CUDA or Google Colab + CUDA GPU runtime** for training
+* Recommended: use **CUDA or Google Colab + CUDA GPU runtime** for transformer training
 * All scripts are modular and can be executed separately
 
 ---
@@ -189,7 +193,6 @@ timestamp, consumption, temperature
 ### Prerequisites
 
 * Python 3.9–3.11 (required for Moments Transformer)
-* Recommended: virtual environment (`venv` or `conda`)
 
 ### Installation
 
@@ -202,8 +205,8 @@ pip install -r requirements.txt
 ### Preprocess Data
 
 ```bash
-python -m scripts.data_preprocessing.merge_temperature_data
-python -m scripts.data_preprocessing.preprocess_data
+python -m scripts.data_preprocessing.merge_temperature_data  # merges raw temperature and energy data (only needed with raw inputs)
+python -m scripts.data_preprocessing.preprocess_data         # launches full preprocessing pipeline; use if data already matches expected format
 ```
 
 ### Train Models
