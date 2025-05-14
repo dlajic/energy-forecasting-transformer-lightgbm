@@ -2,7 +2,7 @@
 
 This project focuses on forecasting urban energy consumption based solely on historical usage and temperature data from Chicago (2011–2018). Two model architectures are compared: a LightGBM ensemble model and a Transformer-based neural network (based on the Moments Time Series Transformer). The goal is to predict hourly electricity demand and analyze model performance, interpretability, and generalizability.
 
-The project also simulates a real-time setting, where hourly predictions are made sequentially to mirror operational deployment. It is designed for modularity and extendability across different urban contexts.
+The project also simulates a real-time setting, where hourly predictions are made sequentially to mirror operational deployment. The modular design allows for adaptation to other urban contexts, assuming a compatible data structure.
 
 ---
 
@@ -12,7 +12,7 @@ The project also simulates a real-time setting, where hourly predictions are mad
 * **Models**: LightGBM and Time Series Transformer Model (moements).
 * **Results**: Both models perform well; LightGBM achieves the best overall performance.
 * **Dashboard**: Live forecast simulation via Streamlit interface.
-* **Usage Context**: Designed for real-time, hourly prediction pipelines and adaptable to operational use cases.
+* **Usage Context**: Developed as a prototype for real-time hourly forecasting, with a modular structure that supports adaptation to similar operational settings.
 
 ---
 
