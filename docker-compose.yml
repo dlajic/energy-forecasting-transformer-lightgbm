@@ -1,0 +1,12 @@
+services:
+  streamlit-app:
+    build: .
+    container_name: energy-streamlit
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./.streamlit:/app/.streamlit
+      - ./streamlit_simulation:/app/streamlit_simulation
+      - ./lightgbm_model:/app/lightgbm_model
+      - ./transformer_model/:/app/transformer_model
+      - ./data:/app/data

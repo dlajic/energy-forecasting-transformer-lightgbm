@@ -1,0 +1,29 @@
+# Python & Cache
+__pycache__/
+*.py[cod]
+
+# Jupyter Notebooks
+*.ipynb
+.ipynb_checkpoints/
+
+# VSCode & IDEs
+.vscode/
+*.swp
+
+# Git
+.git/
+.gitignore
+
+# Python Packaging
+*.egg-info/
+dist/
+build/
+
+# Logs & Output
+*.log
+*.tmp
+*.out
+
+# OS
+.DS_Store
+Thumbs.db
