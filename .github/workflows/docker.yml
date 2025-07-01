@@ -18,6 +18,14 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Build Image
-        run: |
-          docker compose build
+      - name: Docker Compose Build
+        run: docker compose build
+
+      - name: Start Docker Compose (detached)
+        run: docker compose up -d
+
+      - name: Warte kurz, bis die App läuft
+        run: sleep 10
+
+      - name: Teste, ob Streamlit läuft
+        run: curl --fail http://localhost:8501 || (echo "Streamlit not responding!" && exit 1)
