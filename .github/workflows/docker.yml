@@ -28,6 +28,8 @@ jobs:
 
       - name: Run Pytest
         run: pytest tests/
+        env: 
+          PYTHONPATH: .
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
