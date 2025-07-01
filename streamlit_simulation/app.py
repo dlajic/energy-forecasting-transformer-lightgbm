@@ -12,6 +12,7 @@ import torch
 
 from config_streamlit import (MODEL_PATH_LIGHTGBM, DATA_PATH, TRAIN_RATIO, PLOT_COLOR)
 from lightgbm_model.scripts.config_lightgbm import FEATURES
+from lightgbm_model.scripts.utils import load_lightgbm_model
 from transformer_model.scripts.utils.informer_dataset_class import InformerDataset
 from transformer_model.scripts.training.load_basis_model import load_moment_model
 from transformer_model.scripts.config_transformer import CHECKPOINT_DIR, FORECAST_HORIZON, SEQ_LEN
@@ -80,9 +81,8 @@ init_session_state()
 # ============================== Loaders ==============================
 
 @st.cache_data
-def load_lightgbm_model():
-    with open(MODEL_PATH_LIGHTGBM, "rb") as f:
-        return pickle.load(f)
+def load_cached_lightgbm_model():
+    return load_lightgbm_model()
 
 @st.cache_resource
 def load_transformer_model_and_dataset():

@@ -11,6 +11,7 @@ momentfm @ git+https://github.com/moment-timeseries-foundation-model/moment.git@
 numpy==1.25.2                 # Numerical operations
 pandas==2.2.2                 # Data manipulation and analysis
 matplotlib==3.10.0           # Plotting and visualizations
+pytest
 
 # === Machine Learning ===
 scikit-learn==1.6.1          # Evaluation metrics and preprocessing utilities

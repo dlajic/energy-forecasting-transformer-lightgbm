@@ -8,6 +8,7 @@ import pickle
 import json
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 from lightgbm_model.scripts.config_lightgbm import RESULTS_DIR, MODEL_DIR, DATA_PATH
+from lightgbm_model.scripts.utils import load_lightgbm_model
 from joblib import load
 
 # === Ergebnisse-Ordner vorbereiten ===
@@ -15,8 +16,7 @@ os.makedirs(RESULTS_DIR, exist_ok=True)
 
 # === Modell und eval_result laden ===
 # Modell laden
-with open(os.path.join(MODEL_DIR, "lightgbm_final_model.pkl"), "rb") as f:
-    model = pickle.load(f)
+model = load_lightgbm_model()
 
 # Eval laden
 with open(os.path.join(RESULTS_DIR, "lightgbm_eval_result.pkl"), "rb") as f:
