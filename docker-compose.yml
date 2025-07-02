@@ -1,6 +1,6 @@
 services:
   streamlit-app:
-    build: .
+    image: energy_prediction-streamlit-app:latest
     container_name: energy-streamlit
     ports:
       - "8501:8501"
