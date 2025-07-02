@@ -1,6 +1,9 @@
 services:
   streamlit-app:
     image: energy_prediction-streamlit-app:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: energy-streamlit
     ports:
       - "8501:8501"

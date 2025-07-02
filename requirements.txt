@@ -15,7 +15,7 @@ pytest
 
 # === Machine Learning ===
 scikit-learn==1.6.1          # Evaluation metrics and preprocessing utilities
-#torch==2.6.0           # PyTorch with CUDA 12.4 (GPU support)
+torch==2.6.0           # PyTorch with CUDA 12.4 (GPU support)
 #torchvision==0.21.0    # Optional (can support visual tasks, not critical here)
 #torchaudio==2.6.0      # Optional (comes with torch install, can stay)
 
