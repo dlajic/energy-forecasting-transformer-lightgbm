@@ -49,8 +49,8 @@ jobs:
           file: ./Dockerfile
           push: false
           tags: energy_prediction-streamlit-app:latest
-          cache-from: type=gha
-          cache-to: type=gha,mod=max
+          #cache-from: type=gha
+          #cache-to: type=gha,mod=max
           load: true
 
       - name: Start Docker Compose (detached)
