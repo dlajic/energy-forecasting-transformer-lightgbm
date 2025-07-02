@@ -25,7 +25,7 @@ from sklearn.preprocessing import StandardScaler
 warnings.filterwarnings("ignore", category=FutureWarning)
 st.set_page_config(page_title="Electricity Consumption Forecast", layout="wide")
 
-#CSS part
+#CSS part 
 st.markdown(f"""
     <style>
         .stButton > button {{
