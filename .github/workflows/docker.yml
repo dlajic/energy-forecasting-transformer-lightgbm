@@ -7,37 +7,31 @@ on:
       - devops-docker
   pull_request:
 
+
 jobs:
-  docker-build:
+  test:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
-
+      - uses: actions/checkout@v3
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: "3.11"
-
-#     - name: Cache pip dependencies
-#       uses: actions/cache@v4
-#       with:
-#         path: ~/.cache/pip
-#         key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
-#         restore-keys: |
-#           ${{ runner.os }}-pip-
-
-      - name: Install Dependencies
+      - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install pytest
-
       - name: Run Pytest
         run: pytest tests/
-        env: 
+        env:
           PYTHONPATH: .
+
+jobs:
+  docker-build:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+        uses: actions/checkout@v3
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -47,7 +41,7 @@ jobs:
         with:
           context: .
           file: ./Dockerfile
-          push: false
+          #push: false
           tags: energy_prediction-streamlit-app:latest
           #cache-from: type=gha
           #cache-to: type=gha,mod=max
