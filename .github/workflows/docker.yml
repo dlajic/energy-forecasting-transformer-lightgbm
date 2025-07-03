@@ -26,7 +26,6 @@ jobs:
         env:
           PYTHONPATH: .
 
-jobs:
   docker-build:
     needs: test
     runs-on: ubuntu-latest
