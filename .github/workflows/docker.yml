@@ -9,25 +9,25 @@ on:
 
 
 jobs:
-  #test:
-  #  runs-on: ubuntu-latest
-  #  steps:
-  #    - uses: actions/checkout@v3
-  #    - name: Set up Python
-  #      uses: actions/setup-python@v4
-  #      with:
-  #        python-version: "3.11"
-  #    - name: Install dependencies
-  #      run: |
-  #        pip install -r requirements.txt
-  #        pip install pytest
-  #    - name: Run Pytest
-  #      run: pytest tests/
-  #      env:
-  #        PYTHONPATH: .
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install pytest
+      - name: Run Pytest
+        run: pytest tests/
+        env:
+          PYTHONPATH: .
 
   docker-build:
-    #needs: test
+    needs: test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
