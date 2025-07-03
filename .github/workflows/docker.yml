@@ -31,7 +31,7 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
     steps:
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -41,7 +41,7 @@ jobs:
         with:
           context: .
           file: ./Dockerfile
-          #push: false
+          push: false
           tags: energy_prediction-streamlit-app:latest
           #cache-from: type=gha
           #cache-to: type=gha,mod=max
