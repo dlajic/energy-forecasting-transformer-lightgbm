@@ -21,7 +21,7 @@ from sklearn.preprocessing import StandardScaler
 
 # ============================== Layout ==============================
 
-# Streamlit & warnings config
+# Streamlit & warnings config 
 warnings.filterwarnings("ignore", category=FutureWarning)
 st.set_page_config(page_title="Electricity Consumption Forecast", layout="wide")
 
