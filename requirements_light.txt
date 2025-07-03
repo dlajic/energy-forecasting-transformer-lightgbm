@@ -1,0 +1,31 @@
+# =============================
+# Requirements for Energy Prediction Project
+# =============================
+
+# Python 3.11 environment recommended since moments dont work with later versions
+
+# Moment Foundation Model (forecasting backbone)
+#momentfm @ git+https://github.com/moment-timeseries-foundation-model/moment.git@37a8bde4eb3dd340bebc9b54a3b893bcba62cd4f
+
+# === Core Python stack ===
+numpy==1.25.2                 # Numerical operations
+pandas==2.2.2                 # Data manipulation and analysis
+matplotlib==3.10.0           # Plotting and visualizations
+pytest
+
+# === Machine Learning ===
+scikit-learn==1.6.1          # Evaluation metrics and preprocessing utilities
+#torch==2.6.0           # PyTorch with CUDA 12.4 (GPU support)
+#torchvision==0.21.0    # Optional (can support visual tasks, not critical here)
+#torchaudio==2.6.0      # Optional (comes with torch install, can stay)
+
+# === Utilities ===
+tqdm==4.67.1                 # Progress bars
+ipywidgets>=8.0              # Enables tqdm progress bars in Jupyter/Colab
+pprintpp==0.4.0              # Prettier print formatting for nested dicts (used for model output check)
+
+# === lightgbm ===
+lightgbm==4.3.0     # Boosted Trees for tabular modeling (used for baseline and feature selection)
+
+# === Streamlit App ===
+streamlit>=1.30.0
