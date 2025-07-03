@@ -9,7 +9,7 @@ RUN apt-get update && apt-get install -y git && rm -rf /var/lib/apt/lists/*
 
 #Requirements installieren
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements_light.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
 #Pythonpath to tell its modular
 ENV PYTHONPATH="/app"
