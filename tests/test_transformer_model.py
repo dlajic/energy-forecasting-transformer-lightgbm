@@ -18,7 +18,7 @@ def test_load_final_model():
     assert model.training is False  # eval() sollte gesetzt sein
     assert hasattr(model, "forward")
 
-
+ 
 #def test_transformer_prediction_with_dataloader():
 #    # Modell laden
 #    model, device = load_final_transformer_model()
