@@ -14,8 +14,8 @@ from config_streamlit import (MODEL_PATH_LIGHTGBM, DATA_PATH, TRAIN_RATIO, PLOT_
 from lightgbm_model.scripts.config_lightgbm import FEATURES
 from lightgbm_model.scripts.utils import load_lightgbm_model
 from transformer_model.scripts.utils.informer_dataset_class import InformerDataset
-from transformer_model.scripts.training.load_basis_model import load_moment_model
 from transformer_model.scripts.config_transformer import CHECKPOINT_DIR, FORECAST_HORIZON, SEQ_LEN
+from transformer_model.scripts.utils.load_final_model import load_final_transformer_model
 from sklearn.preprocessing import StandardScaler
 
 
@@ -86,15 +86,7 @@ def load_cached_lightgbm_model():
 
 @st.cache_resource
 def load_transformer_model_and_dataset():
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-    # Load model
-    model = load_moment_model()
-    checkpoint_path = os.path.join(CHECKPOINT_DIR, "model_final.pth")
-    model.load_state_dict(torch.load(checkpoint_path, map_location=device))
-    model.to(device)
-    model.eval()
-
+    model, device = load_final_transformer_model()
     # Datasets
     train_dataset = InformerDataset(data_split="train", forecast_horizon=FORECAST_HORIZON, random_seed=13)
     test_dataset = InformerDataset(data_split="test", forecast_horizon=FORECAST_HORIZON, random_seed=13)

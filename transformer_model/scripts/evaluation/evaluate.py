@@ -11,7 +11,7 @@ from tqdm import tqdm
 from sklearn.metrics import mean_squared_error, r2_score
 
 from transformer_model.scripts.config_transformer import BASE_DIR, RESULTS_DIR, CHECKPOINT_DIR, DATA_PATH, FORECAST_HORIZON, SEQ_LEN
-from transformer_model.scripts.training.load_basis_model import load_moment_model
+from transformer_model.scripts.utils.load_final_model import load_final_transformer_model
 from transformer_model.scripts.utils.informer_dataset_class import InformerDataset
 from momentfm.utils.utils import control_randomness
 from transformer_model.scripts.utils.check_device import check_device
@@ -27,12 +27,7 @@ def evaluate():
     logging.info(f"Evaluation is running on: {backend} ({device})")
 
     # Load final model
-    model = load_moment_model()
-    checkpoint_path = os.path.join(CHECKPOINT_DIR, "model_final.pth")
-    model.load_state_dict(torch.load(checkpoint_path, map_location=device))
-    model.to(device)  
-    model.eval()
-    logging.info(f"Loaded final model from: {checkpoint_path}")
+    model, _ = load_final_transformer_model(device)
 
     # Recreate training dataset to get the fitted scaler
     train_dataset = InformerDataset(
