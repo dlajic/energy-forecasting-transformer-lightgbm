@@ -11,7 +11,7 @@ def load_final_transformer_model(device=None):
     model = load_moment_model()
     checkpoint_path = os.path.join(CHECKPOINT_DIR, "model_final.pth")
 
-    model.load_state_dict(torch.load(checkpoint_path, map_location=device))
+    model.load_state_dict(torch.load(checkpoint_path, map_location=device, weights_only=False))
     model.to(device)
     model.eval()
 
