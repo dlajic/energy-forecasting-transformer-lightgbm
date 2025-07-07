@@ -1,5 +1,7 @@
 import pandas as pd
 import numpy as np
+import os
+import pytest
 
 from lightgbm_model.scripts.model_loader_wrapper import load_lightgbm_model
 from streamlit_simulation.config_streamlit import DATA_PATH
@@ -16,21 +18,25 @@ def test_lightgbm_model_load():
 #    assert prediction is not None
 #    assert len(prediction) == 1
 
+USE_DUMMY = os.getenv("USE_DUMMY_MODEL", "false").lower() == "true"
 
 def test_lightgbm_real_prediction():
-    # Daten laden
-    df = pd.read_csv(DATA_PATH, parse_dates=["date"])
-    
-    # Kleine Testmenge extrahieren
-    sample = df[FEATURES].dropna().iloc[:1]  # 1 Beispiel, alle Features
+    if USE_DUMMY:
+        pytest.skip("Test skipped: not meaningful with dummy model.")
+    else:
+        # Daten laden
+        df = pd.read_csv(DATA_PATH, parse_dates=["date"])
+        
+        # Kleine Testmenge extrahieren
+        sample = df[FEATURES].dropna().iloc[:1]  # 1 Beispiel, alle Features
 
-    # Modell laden
-    model = load_lightgbm_model()
+        # Modell laden
+        model = load_lightgbm_model()
 
-    # Vorhersage
-    prediction = model.predict(sample)
+        # Vorhersage
+        prediction = model.predict(sample)
 
-    # Tests
-    assert prediction is not None
-    assert isinstance(prediction, (np.ndarray, list))
-    assert prediction.shape == (1,)
+        # Tests
+        assert prediction is not None
+        assert isinstance(prediction, (np.ndarray, list))
+        assert prediction.shape == (1,)
