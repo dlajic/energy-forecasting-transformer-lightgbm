@@ -15,8 +15,8 @@ jobs:
       USE_DUMMY_MODEL: true
     steps:
       - uses: actions/checkout@v3
-        with:
-          lfs: true
+        #with:
+        #  lfs: true
           
       - name: Set up Python
         uses: actions/setup-python@v4
