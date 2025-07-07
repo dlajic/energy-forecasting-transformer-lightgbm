@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 
-from lightgbm_model.scripts.utils import load_lightgbm_model
+from lightgbm_model.scripts.model_loader_wrapper import load_lightgbm_model
 from streamlit_simulation.config_streamlit import DATA_PATH
 from lightgbm_model.scripts.config_lightgbm import FEATURES
 
