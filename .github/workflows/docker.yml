@@ -11,12 +11,12 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    env:
-      USE_DUMMY_MODEL: true
+    #env:
+      #USE_DUMMY_MODEL: true
     steps:
       - uses: actions/checkout@v3
-        #with:
-        #  lfs: true
+        with:
+          lfs: true
           
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -34,8 +34,8 @@ jobs:
   docker-build:
     needs: test
     runs-on: ubuntu-latest
-    env:
-      USE_DUMMY_MODEL: true
+    #env:
+      #USE_DUMMY_MODEL: true
     steps:
       - uses: actions/checkout@v3
 
