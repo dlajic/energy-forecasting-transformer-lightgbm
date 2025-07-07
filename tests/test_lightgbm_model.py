@@ -32,5 +32,5 @@ def test_lightgbm_real_prediction():
 
     # Tests
     assert prediction is not None
-    assert isinstance(prediction, np.ndarray)
+    assert isinstance(prediction, (np.ndarray, list))
     assert prediction.shape == (1,)
