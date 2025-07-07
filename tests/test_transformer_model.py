@@ -1,5 +1,5 @@
 from transformer_model.scripts.training.load_basis_model import load_moment_model
-from transformer_model.scripts.utils.load_final_model import load_final_transformer_model
+from transformer_model.scripts.utils.model_loader_wrapper import load_final_transformer_model
 from transformer_model.scripts.utils.informer_dataset_class import InformerDataset
 import torch
 from transformer_model.scripts.config_transformer import BATCH_SIZE, FORECAST_HORIZON

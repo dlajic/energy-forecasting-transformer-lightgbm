@@ -15,7 +15,7 @@ from config_streamlit import (MODEL_PATH_LIGHTGBM, DATA_PATH, TRAIN_RATIO, PLOT_
 from lightgbm_model.scripts.config_lightgbm import FEATURES
 from lightgbm_model.scripts.model_loader_wrapper import load_lightgbm_model
 from transformer_model.scripts.utils.informer_dataset_class import InformerDataset
-from transformer_model.scripts.utils.model_loader_wrapper import load_transformer_model_only
+from transformer_model.scripts.utils.model_loader_wrapper import load_final_transformer_model
 from transformer_model.scripts.config_transformer import CHECKPOINT_DIR, FORECAST_HORIZON, SEQ_LEN
 from streamlit_simulation.utils_streamlit import load_data as load_data_raw
 from sklearn.preprocessing import StandardScaler
@@ -94,7 +94,7 @@ def load_cached_lightgbm_model():
 
 @st.cache_resource
 def load_transformer_model_and_dataset():
-    model, device = load_transformer_model_only()
+    model, device = load_final_transformer_model()
 
     if USE_DUMMY:
         from streamlit_simulation.dummy import DummyDataset

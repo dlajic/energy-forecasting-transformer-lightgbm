@@ -1,10 +1,9 @@
 import os
 import torch
-import logging
 from transformer_model.scripts.training.load_basis_model import load_moment_model
 from transformer_model.scripts.config_transformer import CHECKPOINT_DIR
 
-def load_final_transformer_model(device=None):
+def load_real_transformer_model(device=None):  # ⬅️ Name geändert
     if device is None:
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -15,5 +14,4 @@ def load_final_transformer_model(device=None):
     model.to(device)
     model.eval()
 
-    #logging.info(f"Loaded final model from: {checkpoint_path}")
     return model, device
