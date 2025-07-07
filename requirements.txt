@@ -30,3 +30,6 @@ lightgbm==4.3.0     # Boosted Trees for tabular modeling (used for baseline and 
 # === Streamlit App ===
 streamlit>=1.30.0
 plotly>=5.0.0
+
+# === for env dummy ====
+python-dotenv

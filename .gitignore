@@ -12,3 +12,5 @@ dist/
 
 # Notebook-Checkpoints
 .ipynb_checkpoints/
+
+.env

@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 import warnings
 import torch
+from dotenv import load_dotenv
 
 from config_streamlit import (MODEL_PATH_LIGHTGBM, DATA_PATH, TRAIN_RATIO, PLOT_COLOR)
 from lightgbm_model.scripts.config_lightgbm import FEATURES
@@ -80,19 +81,33 @@ def init_session_state():
 init_session_state()
 
 # ============================== Loaders ==============================
+load_dotenv()  # lädt .env Datei automatisch
+USE_DUMMY = os.getenv("USE_DUMMY_MODEL", "false").lower() == "true"
+
+if "dummy_logged" not in st.session_state:
+    print("USE_DUMMY_MODEL =", USE_DUMMY)
+    st.session_state["dummy_logged"] = True
 
 @st.cache_data
 def load_cached_lightgbm_model():
-    return load_lightgbm_model()
+    if USE_DUMMY:
+        from streamlit_simulation.dummy import DummyLightGBMModel
+        return DummyLightGBMModel()
+    else:
+        return load_lightgbm_model()
 
 @st.cache_resource
 def load_transformer_model_and_dataset():
-    model, device = load_final_transformer_model()
-    # Datasets
-    train_dataset = InformerDataset(data_split="train", forecast_horizon=FORECAST_HORIZON, random_seed=13)
-    test_dataset = InformerDataset(data_split="test", forecast_horizon=FORECAST_HORIZON, random_seed=13)
-    test_dataset.scaler = train_dataset.scaler
-
+    if USE_DUMMY:
+        from streamlit_simulation.dummy import DummyTransformerModel, DummyDataset
+        model = DummyTransformerModel()
+        device = "cpu"
+        test_dataset = DummyDataset(length=200)  # beliebige Länge
+    else:
+        model, device = load_final_transformer_model()
+        train_dataset = InformerDataset(data_split="train", forecast_horizon=FORECAST_HORIZON, random_seed=13)
+        test_dataset = InformerDataset(data_split="test", forecast_horizon=FORECAST_HORIZON, random_seed=13)
+        test_dataset.scaler = train_dataset.scaler
     return model, test_dataset, device
 
 @st.cache_data
@@ -327,7 +342,7 @@ pred_timestamps = st.session_state.pred_timestamps
 # ============================== LightGBM Simulation ==============================
 
 if model_choice == "LightGBM" and st.session_state.is_running:
-    model = load_lightgbm_model()
+    model = load_cached_lightgbm_model()
     st.write("Simulation started...")
     st.markdown('<div id="simulation"></div>', unsafe_allow_html=True)
 
