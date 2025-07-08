@@ -1,14 +1,14 @@
 repos:
   - repo: https://github.com/psf/black
-    rev: stable
+    rev: 25.1.0
     hooks:
       - id: black
   - repo: https://github.com/pre-commit/mirrors-isort
-    rev: v5.12.0
+    rev: v5.10.1
     hooks:
       - id: isort
   - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: v0.3.0
+    rev: v0.12.2
     hooks:
       - id: ruff
   - repo: local
@@ -17,4 +17,4 @@ repos:
         name: Run Pytest
         entry: pytest
         language: system
-        types: [python] 
+        types: [python]
