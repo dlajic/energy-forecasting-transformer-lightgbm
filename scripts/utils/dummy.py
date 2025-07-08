@@ -35,5 +35,4 @@ class DummyTransformerModel:
 
 class DummyLightGBMModel:
     def predict(self, X):
-        # gibt konstanten Wert zurück – z. B. 0
-        return [0 for _ in range(len(X))]
+        return np.zeros(len(X))  # ← gibt jetzt np.ndarray zurück

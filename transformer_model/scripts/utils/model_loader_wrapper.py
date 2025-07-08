@@ -1,21 +1,16 @@
-# transformer_model/scripts/utils/model_loader_wrapper.py
-import os
-from dotenv import load_dotenv
 from transformer_model.scripts.utils.load_final_model import load_real_transformer_model
 from transformer_model.scripts.utils.informer_dataset_class import InformerDataset
 from transformer_model.scripts.config_transformer import FORECAST_HORIZON
+from scripts.utils.env import use_dummy
 
 try:
-    from streamlit_simulation.dummy import DummyTransformerModel, DummyDataset
+    from scripts.utils.dummy import DummyTransformerModel, DummyDataset
 except ImportError:
     DummyTransformerModel = None
     DummyDataset = None
 
-load_dotenv()
-USE_DUMMY = os.getenv("USE_DUMMY_MODEL", "false").lower() == "true"
-
 def load_final_transformer_model():
-    if USE_DUMMY:
+    if use_dummy():
         if DummyTransformerModel is None:
             raise ImportError("DummyTransformerModel not available")
         return DummyTransformerModel(), "cpu"
@@ -25,7 +20,7 @@ def load_final_transformer_model():
 def load_model_and_dataset():
     model, device = load_final_transformer_model()
 
-    if USE_DUMMY:
+    if use_dummy():
         if DummyDataset is None:
             raise ImportError("DummyDataset not available")
         dataset = DummyDataset(length=200)

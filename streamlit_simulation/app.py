@@ -9,7 +9,6 @@ import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 import warnings
 import torch
-from dotenv import load_dotenv
 
 from config_streamlit import (MODEL_PATH_LIGHTGBM, DATA_PATH, TRAIN_RATIO, PLOT_COLOR)
 from lightgbm_model.scripts.config_lightgbm import FEATURES
@@ -82,13 +81,6 @@ def init_session_state():
 init_session_state()
 
 # ============================== Loaders ==============================
-load_dotenv()  # lädt .env Datei automatisch
-USE_DUMMY = os.getenv("USE_DUMMY_MODEL", "false").lower() == "true"
-
-if "dummy_logged" not in st.session_state:
-    print("USE_DUMMY_MODEL =", USE_DUMMY)
-    st.session_state["dummy_logged"] = True
-
 @st.cache_data
 def load_cached_lightgbm_model():
     return load_lightgbm_model()
