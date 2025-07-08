@@ -188,6 +188,26 @@ temperature      # hourly
 
 ---
 
+## CI/CD & DevOps Setup
+
+This project includes a lightweight CI pipeline using GitHub Actions:
+
+* **CI**:  
+  - Runs `pytest` on every push  
+  - Builds and validates the Docker image
+
+* **Code quality checks**:  
+  - Uses `pre-commit` hooks with `black`, `isort`, and `ruff`  
+  - Ensures consistent formatting and linting before commits
+
+To enable pre-commit locally:
+
+```bash
+pre-commit install
+```
+
+---
+
 ## Run Locally
 
 ### Prerequisites
@@ -235,6 +255,27 @@ For editable install:
 ```bash
 pip install -e .
 ```
+
+## Run App with Docker
+
+This project also supports containerized execution using Docker:
+
+
+```bash
+# Start app with Docker Compose (Linux)
+./start.sh
+
+# Or on Windows (PowerShell)
+./start.ps1
+```
+
+Make sure Docker (Docker-Desktop) is running before executing the script.
+
+This will:
+
+1. Build the Docker image
+2. Start the Streamlit app on localhost:8501
+3. Open it automatically in your browser
 
 ---
 

@@ -1,5 +1,8 @@
 import pandas as pd
-from streamlit_simulation.utils_streamlit import load_data  # oder dorthin, wo die Funktion liegt
+
+from streamlit_simulation.utils_streamlit import \
+    load_data  # oder dorthin, wo die Funktion liegt
+
 
 def test_load_data():
     df = load_data()

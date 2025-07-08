@@ -1,7 +1,8 @@
-import pickle
 import os
+import pickle
 
 MODEL_PATH = os.path.join("lightgbm_model", "model", "lightgbm_final_model.pkl")
+
 
 def load_lightgbm_model():
     with open(MODEL_PATH, "rb") as f:

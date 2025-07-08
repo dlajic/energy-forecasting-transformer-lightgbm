@@ -31,7 +31,8 @@ lightgbm==4.3.0     # Boosted Trees for tabular modeling (used for baseline and 
 streamlit>=1.30.0
 plotly>=5.0.0
 
-# === for pytest/env dummy/pre-commit ====
+# === for pytest/env dummy/pre-commit/huggingface ====
 pytest
 python-dotenv
 pre-commit
+huggingface_hub

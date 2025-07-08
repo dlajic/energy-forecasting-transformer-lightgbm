@@ -1,34 +1,33 @@
-import sys
-import os
-import streamlit as st
-import pickle
-import pandas as pd
 import time
-import numpy as np
-import matplotlib.pyplot as plt
-import matplotlib.dates as mdates
 import warnings
-import torch
 
-from config_streamlit import (MODEL_PATH_LIGHTGBM, DATA_PATH, TRAIN_RATIO, PLOT_COLOR)
+import matplotlib.dates as mdates
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import streamlit as st
+import torch
+from config_streamlit import DATA_PATH, PLOT_COLOR, TRAIN_RATIO
+
 from lightgbm_model.scripts.config_lightgbm import FEATURES
 from lightgbm_model.scripts.model_loader_wrapper import load_lightgbm_model
-from transformer_model.scripts.utils.informer_dataset_class import InformerDataset
-from transformer_model.scripts.utils.model_loader_wrapper import load_final_transformer_model
-from transformer_model.scripts.utils.model_loader_wrapper import load_model_and_dataset
-from transformer_model.scripts.config_transformer import CHECKPOINT_DIR, FORECAST_HORIZON, SEQ_LEN
 from streamlit_simulation.utils_streamlit import load_data as load_data_raw
-from sklearn.preprocessing import StandardScaler
-
+from transformer_model.scripts.config_transformer import (FORECAST_HORIZON,
+                                                          SEQ_LEN)
+from transformer_model.scripts.utils.informer_dataset_class import \
+    InformerDataset
+from transformer_model.scripts.utils.model_loader_wrapper import \
+    load_model_and_dataset
 
 # ============================== Layout ==============================
 
-# Streamlit & warnings config 
+# Streamlit & warnings config
 warnings.filterwarnings("ignore", category=FutureWarning)
 st.set_page_config(page_title="Electricity Consumption Forecast", layout="wide")
 
-#CSS part 
-st.markdown(f"""
+# CSS part
+st.markdown(
+    f"""
     <style>
         .stButton > button {{
             background-color: {PLOT_COLOR};
@@ -46,7 +45,9 @@ st.markdown(f"""
         }}
 
     </style>
-""", unsafe_allow_html=True)
+""",
+    unsafe_allow_html=True,
+)
 
 
 st.title("Electricity Consumption Forecast: Hourly Simulation")
@@ -72,22 +73,26 @@ def init_session_state():
         "pred_timestamps": [],
         "last_fig": None,
         "valid_pos": 0,
-        "first_plot_shown": False
+        "first_plot_shown": False,
     }
     for key, value in defaults.items():
         if key not in st.session_state:
             st.session_state[key] = value
 
+
 init_session_state()
+
 
 # ============================== Loaders ==============================
 @st.cache_data
 def load_cached_lightgbm_model():
     return load_lightgbm_model()
 
+
 @st.cache_resource
 def load_transformer_model_and_dataset():
     return load_model_and_dataset()
+
 
 @st.cache_data
 def load_data():
@@ -95,6 +100,7 @@ def load_data():
 
 
 # ============================== Utility Functions ==============================
+
 
 def predict_transformer_step(model, dataset, idx, device):
     """Performs a single prediction step with the transformer model."""
@@ -125,31 +131,52 @@ def init_simulation_layout():
     return plot_title, plot_container, x_axis_label, info_container
 
 
-def create_prediction_plot(pred_timestamps, pred_vals, true_timestamps, true_vals, window_hours, y_min=None, y_max=None):
+def create_prediction_plot(
+    pred_timestamps,
+    pred_vals,
+    true_timestamps,
+    true_vals,
+    window_hours,
+    y_min=None,
+    y_max=None,
+):
     """Generates the matplotlib figure for plotting prediction vs. actual."""
-    fig, ax = plt.subplots(figsize=(8, 5), constrained_layout=True, facecolor=PLOT_COLOR)
+    fig, ax = plt.subplots(
+        figsize=(8, 5), constrained_layout=True, facecolor=PLOT_COLOR
+    )
     ax.set_facecolor(PLOT_COLOR)
 
-    ax.plot(pred_timestamps[-window_hours:], pred_vals[-window_hours:], label="Prediction", color="#EF233C", linestyle="--")
+    ax.plot(
+        pred_timestamps[-window_hours:],
+        pred_vals[-window_hours:],
+        label="Prediction",
+        color="#EF233C",
+        linestyle="--",
+    )
     if true_vals:
-        ax.plot(true_timestamps[-window_hours:], true_vals[-window_hours:], label="Actual", color="#0077B6")
+        ax.plot(
+            true_timestamps[-window_hours:],
+            true_vals[-window_hours:],
+            label="Actual",
+            color="#0077B6",
+        )
 
     ax.set_ylabel("Consumption (MW)", fontsize=8)
     ax.legend(
-    fontsize=8,
-    loc="upper left",
-    bbox_to_anchor=(0, 0.95),
-    #facecolor= INPUT_BG,    # INPUT_BG
-    #edgecolor= ACCENT_COLOR,    # ACCENT_COLOR
-    #labelcolor= TEXT_COLOR    # TEXT_COLOR
+        fontsize=8,
+        loc="upper left",
+        bbox_to_anchor=(0, 0.95),
+        # facecolor= INPUT_BG,    # INPUT_BG
+        # edgecolor= ACCENT_COLOR,    # ACCENT_COLOR
+        # labelcolor= TEXT_COLOR    # TEXT_COLOR
     )
-    ax.yaxis.grid(True, linestyle=':', linewidth=0.5, alpha=0.7)
+    ax.yaxis.grid(True, linestyle=":", linewidth=0.5, alpha=0.7)
     ax.set_ylim(y_min, y_max)
     ax.xaxis.set_major_locator(mdates.DayLocator(interval=1))
     ax.xaxis.set_major_formatter(mdates.DateFormatter("%m-%d"))
     ax.tick_params(axis="x", labelrotation=0, labelsize=5)
     ax.tick_params(axis="y", labelsize=5)
-    #fig.patch.set_facecolor('#e6ecf0')  # outer area
+    # fig.patch.set_facecolor('#e6ecf0')  # outer area
 
     for spine in ax.spines.values():
         spine.set_visible(False)
@@ -164,19 +191,21 @@ def render_simulation_view(timestamp, prediction, actual, progress, fig, paused=
     plot_title.markdown(
         f"<div style='text-align: center; font-size: 20pt; font-weight: bold; margin-bottom: -0.7rem; margin-top: 0rem;'>"
         f"{title}</div>",
-        unsafe_allow_html=True
+        unsafe_allow_html=True,
     )
     plot_container.pyplot(fig)
 
-    #st.markdown("<div style='margin-bottom: 0.5rem;'></div>", unsafe_allow_html=True)
-    #x_axis_label.markdown(f"<div style='text-align: center; font-size: 13pt; color: {TEXT_COLOR}; margin-top: -0.5rem;'>"f"Time</div>",unsafe_allow_html=True)
+    # st.markdown("<div style='margin-bottom: 0.5rem;'></div>", unsafe_allow_html=True)
+    # x_axis_label.markdown(f"<div style='text-align: center; font-size: 13pt; color: {TEXT_COLOR}; margin-top: -0.5rem;'>"f"Time</div>",unsafe_allow_html=True)
 
     with info_container.container():
         st.markdown(
             f"<span style='font-size: 24px; font-weight: 600;'>Time: {timestamp}</span>",
-            unsafe_allow_html=True
+            unsafe_allow_html=True,
         )
-        st.metric("Prediction", f"{prediction:,.0f} MW" if prediction is not None else "–")
+        st.metric(
+            "Prediction", f"{prediction:,.0f} MW" if prediction is not None else "–"
+        )
         st.metric("Actual", f"{actual:,.0f} MW" if actual is not None else "–")
         st.caption("Simulation Progress")
         st.progress(progress)
@@ -187,18 +216,25 @@ def render_simulation_view(timestamp, prediction, actual, progress, fig, paused=
             min_len = min(len(true_arr), len(pred_arr))
             if min_len >= 1:
                 errors = np.abs(true_arr[:min_len] - pred_arr[:min_len])
-                mape = np.mean(errors / np.where(true_arr[:min_len] == 0, 1e-10, true_arr[:min_len])) * 100
+                mape = (
+                    np.mean(
+                        errors
+                        / np.where(true_arr[:min_len] == 0, 1e-10, true_arr[:min_len])
+                    )
+                    * 100
+                )
                 mae = np.mean(errors)
                 max_error = np.max(errors)
 
                 st.divider()
                 st.markdown(
-                    f"<span style='font-size: 24px; font-weight: 600; '>Interim Metrics</span>",
-                    unsafe_allow_html=True
+                    "<span style='font-size: 24px; font-weight: 600; '>Interim Metrics</span>",
+                    unsafe_allow_html=True,
                 )
                 st.metric("MAPE (so far)", f"{mape:.2f} %")
                 st.metric("MAE (so far)", f"{mae:,.0f} MW")
                 st.metric("Max Error", f"{max_error:,.0f} MW")
+
 
 # ============================== Data Preparation ==============================
 
@@ -209,7 +245,9 @@ train_size = int(len(df_full) * TRAIN_RATIO)
 test_df_raw = df_full.iloc[train_size:].reset_index(drop=True)
 
 # Start at first full hour (00:00)
-first_full_day_index = test_df_raw[test_df_raw["date"].dt.time == pd.Timestamp("00:00:00").time()].index[0]
+first_full_day_index = test_df_raw[
+    test_df_raw["date"].dt.time == pd.Timestamp("00:00:00").time()
+].index[0]
 test_df_full = test_df_raw.iloc[first_full_day_index:].reset_index(drop=True)
 
 # Select simulation window via date picker
@@ -220,25 +258,33 @@ max_date = test_df_full["date"].max().date()
 
 with st.sidebar:
     st.header("⚙️ Simulation Settings")
-    
+
     st.subheader("General Settings")
-    model_choice = st.selectbox("Choose prediction model", ["LightGBM", "Transformer Model (moments)"])
+    model_choice = st.selectbox(
+        "Choose prediction model", ["LightGBM", "Transformer Model (moments)"]
+    )
     if model_choice == "Transformer Model (moments)":
-        st.caption("⚠️ Note: Transformer model runs slower without GPU. (Use Speed = 10)")
+        st.caption(
+            "⚠️ Note: Transformer model runs slower without GPU. (Use Speed = 10)"
+        )
     window_days = st.selectbox("Display window (days)", options=[3, 5, 7], index=0)
     window_hours = window_days * 24
     speed = st.slider("Speed", 1, 10, 5)
-    
+
     st.subheader("Date Range")
-    start_date = st.date_input("Start Date", value=min_date, min_value=min_date, max_value=max_date)
-    end_date = st.date_input("End Date", value=max_date, min_value=min_date, max_value=max_date)
+    start_date = st.date_input(
+        "Start Date", value=min_date, min_value=min_date, max_value=max_date
+    )
+    end_date = st.date_input(
+        "End Date", value=max_date, min_value=min_date, max_value=max_date
+    )
 
 # ============================== Data Preparation (filtered) ==============================
 
 # final filtered date window
 test_df_filtered = test_df_full[
-    (test_df_full["date"].dt.date >= start_date) &
-    (test_df_full["date"].dt.date <= end_date)
+    (test_df_full["date"].dt.date >= start_date)
+    & (test_df_full["date"].dt.date <= end_date)
 ].reset_index(drop=True)
 
 # For progression bar
@@ -271,9 +317,9 @@ if reset_button:
 
 # Auto-reset on critical parameter change while running
 if st.session_state.is_running and (
-    start_date != st.session_state.get("last_start_date") or
-    end_date != st.session_state.get("last_end_date") or
-    model_choice != st.session_state.get("last_model_choice")
+    start_date != st.session_state.get("last_start_date")
+    or end_date != st.session_state.get("last_end_date")
+    or model_choice != st.session_state.get("last_model_choice")
 ):
     st.session_state.start_index = 0
     st.session_state.pred_vals = []
@@ -297,21 +343,27 @@ if not st.session_state.is_running and st.session_state.last_fig is not None:
     st.write("Simulation paused...")
     plot_title, plot_container, x_axis_label, info_container = init_simulation_layout()
 
-    timestamp = st.session_state.pred_timestamps[-1] if st.session_state.pred_timestamps else "–"
+    timestamp = (
+        st.session_state.pred_timestamps[-1]
+        if st.session_state.pred_timestamps
+        else "–"
+    )
     prediction = st.session_state.pred_vals[-1] if st.session_state.pred_vals else None
     actual = st.session_state.true_vals[-1] if st.session_state.true_vals else None
     progress = st.session_state.start_index / total_steps_ui
 
-    render_simulation_view(timestamp, prediction, actual, progress, st.session_state.last_fig, paused=True)
+    render_simulation_view(
+        timestamp, prediction, actual, progress, st.session_state.last_fig, paused=True
+    )
 
 
 # ============================== initialize values ==============================
 
-#if lightGbm use testdata from above
+# if lightGbm use testdata from above
 if model_choice == "LightGBM":
-        test_df = test_df_filtered.copy()
+    test_df = test_df_filtered.copy()
 
-#Shared state references for storing predictions and ground truths
+# Shared state references for storing predictions and ground truths
 
 true_vals = st.session_state.true_vals
 pred_vals = st.session_state.pred_vals
@@ -346,14 +398,22 @@ if model_choice == "LightGBM" and st.session_state.is_running:
             true_timestamps.append(prev_time)
 
         fig = create_prediction_plot(
-            pred_timestamps, pred_vals,
-            true_timestamps, true_vals,
+            pred_timestamps,
+            pred_vals,
+            true_timestamps,
+            true_vals,
             window_hours,
-            y_min= test_df_filtered["consumption_MW"].min() - 2000,
-            y_max= test_df_filtered["consumption_MW"].max() + 2000
+            y_min=test_df_filtered["consumption_MW"].min() - 2000,
+            y_max=test_df_filtered["consumption_MW"].max() + 2000,
         )
 
-        render_simulation_view(timestamp, prediction, prev_actual if i >= 1 else None, i / len(test_df), fig)
+        render_simulation_view(
+            timestamp,
+            prediction,
+            prev_actual if i >= 1 else None,
+            i / len(test_df),
+            fig,
+        )
 
         plt.close(fig)  # Speicher freigeben
 
@@ -375,7 +435,9 @@ if model_choice == "Transformer Model (moments)":
         if not st.session_state.first_plot_shown:
             spinner_placeholder.markdown("Running first prediction – please wait...")
 
-        plot_title, plot_container, x_axis_label, info_container = init_simulation_layout()
+        plot_title, plot_container, x_axis_label, info_container = (
+            init_simulation_layout()
+        )
 
         # Zugriff auf Modell, Dataset, Device
         model, test_dataset, device = load_transformer_model_and_dataset()
@@ -383,21 +445,27 @@ if model_choice == "Transformer Model (moments)":
         scaler = test_dataset.scaler
         n_channels = test_dataset.n_channels
 
-        test_start_idx = len(InformerDataset(data_split="train", forecast_horizon=FORECAST_HORIZON)) + SEQ_LEN
-        base_timestamp = pd.read_csv(DATA_PATH, parse_dates=["date"])["date"].iloc[test_start_idx] #get original timestamp for later, cause not in dataset anymore
+        test_start_idx = (
+            len(InformerDataset(data_split="train", forecast_horizon=FORECAST_HORIZON))
+            + SEQ_LEN
+        )
+        base_timestamp = pd.read_csv(DATA_PATH, parse_dates=["date"])["date"].iloc[
+            test_start_idx
+        ]  # get original timestamp for later, cause not in dataset anymore
 
         # Schritt 1: Finde Index, ab dem Stunde = 00:00 ist
         offset = 0
-        while (base_timestamp + pd.Timedelta(hours=offset)).time() != pd.Timestamp("00:00:00").time():
+        while (base_timestamp + pd.Timedelta(hours=offset)).time() != pd.Timestamp(
+            "00:00:00"
+        ).time():
             offset += 1
-        
+
         # Neuer Startindex in der Simulation
         start_index = offset
 
         # Session-State bei Bedarf initial setzen
         if "start_index" not in st.session_state or st.session_state.start_index == 0:
             st.session_state.start_index = start_index
-
 
         # Vorbereiten: Liste der gültigen i-Werte im gewünschten Zeitraum
         valid_indices = []
@@ -414,9 +482,9 @@ if model_choice == "Transformer Model (moments)":
             st.session_state.valid_pos = 0
 
         # Hauptschleife: Nur noch über gültige Indizes iterieren
-        for relative_idx, i in enumerate(valid_indices[st.session_state.valid_pos:]):
+        for relative_idx, i in enumerate(valid_indices[st.session_state.valid_pos :]):
 
-        #for i in range(st.session_state.start_index, len(test_dataset)):
+            # for i in range(st.session_state.start_index, len(test_dataset)):
             if not st.session_state.is_running:
                 break
 
@@ -427,7 +495,9 @@ if model_choice == "Transformer Model (moments)":
             pred_timestamps.append(current_time)
 
             if i >= 1:
-                prev_actual = test_dataset[i - 1][1][0, 0]  # erster Forecast-Wert der letzten Zeile
+                prev_actual = test_dataset[i - 1][1][
+                    0, 0
+                ]  # erster Forecast-Wert der letzten Zeile
                 # Rückskalieren
                 dummy_actual = np.zeros((1, n_channels))
                 dummy_actual[:, 0] = prev_actual
@@ -441,14 +511,22 @@ if model_choice == "Transformer Model (moments)":
 
             # Plot erzeugen
             fig = create_prediction_plot(
-                pred_timestamps, pred_vals,
-                true_timestamps, true_vals,
+                pred_timestamps,
+                pred_vals,
+                true_timestamps,
+                true_vals,
                 window_hours,
-                y_min= test_df_filtered["consumption_MW"].min() - 2000,
-                y_max= test_df_filtered["consumption_MW"].max() + 2000
+                y_min=test_df_filtered["consumption_MW"].min() - 2000,
+                y_max=test_df_filtered["consumption_MW"].max() + 2000,
             )
             if len(pred_vals) >= 2 and len(true_vals) >= 1:
-                render_simulation_view(current_time, current_pred, actual_val if i >= 1 else None, st.session_state.valid_pos / total_steps, fig)
+                render_simulation_view(
+                    current_time,
+                    current_pred,
+                    actual_val if i >= 1 else None,
+                    st.session_state.valid_pos / total_steps,
+                    fig,
+                )
                 if not st.session_state.first_plot_shown:
                     spinner_placeholder.empty()
                     st.session_state.first_plot_shown = True
@@ -463,7 +541,8 @@ if model_choice == "Transformer Model (moments)":
 
 # ============================== Scroll Sync ==============================
 
-st.markdown("""
+st.markdown(
+    """
     <script>
     window.addEventListener("message", (event) => {
         if (event.data.type === "save_scroll") {
@@ -472,5 +551,6 @@ st.markdown("""
         }
     });
     </script>
-""", unsafe_allow_html=True)
-
+""",
+    unsafe_allow_html=True,
+)

@@ -1,20 +1,29 @@
-from transformer_model.scripts.training.load_basis_model import load_moment_model
-from transformer_model.scripts.utils.model_loader_wrapper import load_final_transformer_model
-from transformer_model.scripts.utils.informer_dataset_class import InformerDataset
-import torch
-from transformer_model.scripts.config_transformer import BATCH_SIZE, FORECAST_HORIZON
-from torch.utils.data import DataLoader
 import os
-import pytest
 
-print("🚨 Transformer test file loaded")
+import pytest
+import torch
+
+from transformer_model.scripts.config_transformer import FORECAST_HORIZON
+from transformer_model.scripts.training.load_basis_model import \
+    load_moment_model
+from transformer_model.scripts.utils.informer_dataset_class import \
+    InformerDataset
+from transformer_model.scripts.utils.model_loader_wrapper import \
+    load_final_transformer_model
+
+print("Transformer test file loaded")
+
 
 def test_load_moment_model():
     model = load_moment_model()
     assert model is not None
-    assert hasattr(model, "forward")  # oder eine spezifische Methode, die dein Modell immer hat
+    assert hasattr(
+        model, "forward"
+    )  # oder eine spezifische Methode, die dein Modell immer hat
+
 
 USE_DUMMY = os.getenv("USE_DUMMY_MODEL", "false").lower() == "true"
+
 
 def test_load_final_model():
     if USE_DUMMY:
@@ -24,8 +33,9 @@ def test_load_final_model():
         assert model is not None
         assert model.training is False  # eval() sollte gesetzt sein
         assert hasattr(model, "forward")
- 
-#def test_transformer_prediction_with_dataloader():
+
+
+# def test_transformer_prediction_with_dataloader():
 #    # Modell laden
 #    model, device = load_final_transformer_model()
 #
@@ -60,10 +70,14 @@ def test_transformer_real_prediction():
 
         # Erstes Sample holen
         timeseries, _, input_mask = dataset[0]  # [C, T], [C, T_pred], [T]
-        
+
         # In richtige Tensor-Form bringen
-        x = torch.tensor(timeseries, dtype=torch.float32).unsqueeze(0).to(device)        # [1, C, T]
-        mask = torch.tensor(input_mask, dtype=torch.bool).unsqueeze(0).to(device)        # [1, T]
+        x = (
+            torch.tensor(timeseries, dtype=torch.float32).unsqueeze(0).to(device)
+        )  # [1, C, T]
+        mask = (
+            torch.tensor(input_mask, dtype=torch.bool).unsqueeze(0).to(device)
+        )  # [1, T]
 
         # Prediction
         with torch.no_grad():

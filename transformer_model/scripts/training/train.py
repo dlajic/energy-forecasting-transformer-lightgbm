@@ -1,34 +1,31 @@
 # train.py
 
-import os
 import json
-import time
 import logging
+import os
+import time
+
 import numpy as np
 import torch
-from tqdm import tqdm
-from sklearn.metrics import mean_squared_error, mean_absolute_error
-
-from transformer_model.scripts.config_transformer import (
-    BASE_DIR,
-    MAX_EPOCHS,
-    BATCH_SIZE,
-    LEARNING_RATE,
-    MAX_LR,
-    GRAD_CLIP,
-    FORECAST_HORIZON,
-    CHECKPOINT_DIR,
-    RESULTS_DIR
-)
-
-from transformer_model.scripts.training.load_basis_model import load_moment_model
-from transformer_model.scripts.utils.create_dataloaders import create_dataloaders
-from transformer_model.scripts.utils.check_device import check_device
 from momentfm.utils.utils import control_randomness
+from sklearn.metrics import mean_absolute_error, mean_squared_error
+from tqdm import tqdm
 
+from transformer_model.scripts.config_transformer import (CHECKPOINT_DIR,
+                                                          GRAD_CLIP,
+                                                          LEARNING_RATE,
+                                                          MAX_EPOCHS, MAX_LR,
+                                                          RESULTS_DIR)
+from transformer_model.scripts.training.load_basis_model import \
+    load_moment_model
+from transformer_model.scripts.utils.check_device import check_device
+from transformer_model.scripts.utils.create_dataloaders import \
+    create_dataloaders
 
 # === Setup logging ===
-logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
 
 
 def train():
@@ -54,10 +51,7 @@ def train():
     # Setup learning rate scheduler (OneCycle policy)
     total_steps = len(train_loader) * MAX_EPOCHS
     scheduler = torch.optim.lr_scheduler.OneCycleLR(
-        optimizer,
-        max_lr=MAX_LR,
-        total_steps=total_steps,
-        pct_start=0.3
+        optimizer, max_lr=MAX_LR, total_steps=total_steps, pct_start=0.3
     )
 
     # Ensure output folders exist
@@ -70,13 +64,15 @@ def train():
     best_mae = float("inf")
     best_epoch = None
     no_improve_epochs = 0
-    patience = 5  
+    patience = 5
 
     for epoch in range(MAX_EPOCHS):
         model.train()
         epoch_losses = []
 
-        for timeseries, forecast, input_mask in tqdm(train_loader, desc=f"Epoch {epoch}"):
+        for timeseries, forecast, input_mask in tqdm(
+            train_loader, desc=f"Epoch {epoch}"
+        ):
             timeseries = timeseries.float().to(device)
             input_mask = input_mask.to(device)
             forecast = forecast.float().to(device)
@@ -133,7 +129,6 @@ def train():
         trues = np.concatenate(trues, axis=0)
         preds = np.concatenate(preds, axis=0)
 
-
         # Reshape for sklearn metrics
         trues_2d = trues.reshape(trues.shape[0], -1)
         preds_2d = preds.reshape(preds.shape[0], -1)
@@ -154,7 +149,9 @@ def train():
             # Save best model
             best_model_path = os.path.join(CHECKPOINT_DIR, "best_model.pth")
             torch.save(model.state_dict(), best_model_path)
-            logging.info(f"New best model saved to: {best_model_path} (MAE: {best_mae:.4f})")
+            logging.info(
+                f"New best model saved to: {best_model_path} (MAE: {best_mae:.4f})"
+            )
         else:
             no_improve_epochs += 1
             logging.info(f"No improvement in MAE for {no_improve_epochs} epoch(s).")
@@ -181,7 +178,7 @@ def train():
     metrics = {
         "train_losses": [float(x) for x in train_losses],
         "test_mses": [float(x) for x in test_mses],
-        "test_maes": [float(x) for x in test_maes]
+        "test_maes": [float(x) for x in test_maes],
     }
 
     metrics_path = os.path.join(RESULTS_DIR, "training_metrics.json")

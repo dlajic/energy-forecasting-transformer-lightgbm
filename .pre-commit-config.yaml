@@ -11,10 +11,3 @@ repos:
     rev: v0.12.2
     hooks:
       - id: ruff
-  - repo: local
-    hooks:
-      - id: pytest
-        name: Run Pytest
-        entry: pytest
-        language: system
-        types: [python]
