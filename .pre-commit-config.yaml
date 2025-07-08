@@ -17,4 +17,4 @@ repos:
         name: Run Pytest
         entry: pytest
         language: system
-        types: [python]
+        types: [python] 
