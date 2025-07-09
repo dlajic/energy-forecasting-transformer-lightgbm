@@ -1,10 +1,11 @@
 # informer_dataset.py
-
 import logging
+import os
 from typing import Optional
 
 import numpy as np
 import pandas as pd
+from huggingface_hub import hf_hub_download
 from sklearn.preprocessing import StandardScaler
 
 from transformer_model.scripts.config_transformer import DATA_PATH, SEQ_LEN
@@ -38,11 +39,27 @@ class InformerDataset:
 
         self.seq_len = SEQ_LEN
         self.forecast_horizon = forecast_horizon
-        self.full_file_path_and_name = DATA_PATH
         self.data_split = data_split
         self.data_stride_len = data_stride_len
         self.task_name = task_name
         self.random_seed = random_seed
+
+        # use local dataset if available, else download it from huggingface
+        HF_REPO = "dlaj/energy-forecasting-files"
+        HF_FILENAME = "data/processed/energy_consumption_aggregated_cleaned.csv"
+
+        if not os.path.exists(DATA_PATH):
+            print(f"Lokale Datei nicht gefunden: {DATA_PATH}")
+            print("Lade von Hugging Face Hub...")
+
+            self.full_file_path_and_name = hf_hub_download(
+                repo_id=HF_REPO,
+                filename=HF_FILENAME,
+                repo_type="dataset",
+                cache_dir="hf_cache",  # optional
+            )
+        else:
+            self.full_file_path_and_name = DATA_PATH
 
         self._read_data()
 
