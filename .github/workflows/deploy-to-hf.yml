@@ -30,10 +30,13 @@ jobs:
                 --exclude='.git' \
                 --exclude='notebooks/' \
                 --exclude='data/' \
+                --exclude='assets/' \
                 --exclude='tests/' \
                 --exclude='.vs/' \
                 --exclude='*.csv' \
                 --exclude='*.pth' \
+                --exclude='*.pkl' \
+                --exclude='*.png' \
                 --exclude='Dockerfile' \
                 --exclude='docker-compose.yml' \
                 ./ energy-forecasting-app/
