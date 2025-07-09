@@ -3,7 +3,7 @@ name: Deploy to Hugging Face
 on:
   push:
     branches:
-      - main  # oder dein gewünschter Branch
+      - main  # oder dein gewünschter Branch 
       - devops-docker
 
 jobs:
