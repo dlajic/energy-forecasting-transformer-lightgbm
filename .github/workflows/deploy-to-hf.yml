@@ -48,4 +48,8 @@ jobs:
           if git diff --quiet; then
             echo "No changes to push – skipping."
             exit 0
-          fi 
+          fi
+
+      - name: Copy HF README
+        run: cp README_HF.md energy-forecasting-app/README.md
+ 
