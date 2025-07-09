@@ -27,19 +27,14 @@ jobs:
           git clone https://dlaj:$HF_TOKEN@huggingface.co/spaces/dlaj/energy-forecasting-app
           
               rsync -av \
-                --exclude='.git' \
-                --exclude='notebooks/' \
-                --exclude='data/' \
-                --exclude='assets/' \
-                --exclude='tests/' \
-                --exclude='.vs/' \
-                --exclude='*.csv' \
-                --exclude='*.pth' \
-                --exclude='*.pkl' \
-                --exclude='*.png' \
-                --exclude='Dockerfile' \
-                --exclude='docker-compose.yml' \
-                ./ energy-forecasting-app/
+                .streamlit/ \
+                streamlit_simulation/ \
+                lightgbm_model/scripts \
+                transformer_model/scripts \
+                requirements.txt \
+                setup.py \
+                README.md \
+                energy-forecasting-app/
 
           cd energy-forecasting-app
           
