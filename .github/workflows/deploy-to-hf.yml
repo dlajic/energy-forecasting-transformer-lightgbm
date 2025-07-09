@@ -33,7 +33,7 @@ jobs:
                 ./transformer_model/scripts \
                 requirements.txt \
                 setup.py \
-                README.md \
+                README_HF.md \
                 energy-forecasting-app/
 
           cd energy-forecasting-app
