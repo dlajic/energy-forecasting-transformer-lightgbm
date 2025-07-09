@@ -26,7 +26,18 @@ jobs:
           
           git clone https://dlaj:$HF_TOKEN@huggingface.co/spaces/dlaj/energy-forecasting-app
           
-          rsync -av --exclude='.git' ./ energy-forecasting-app/
+              rsync -av \
+                --exclude='.git' \
+                --exclude='notebooks/' \
+                --exclude='data/' \
+                --exclude='tests/' \
+                --exclude='.vs/' \
+                --exclude='*.csv' \
+                --exclude='*.pth' \
+                --exclude='Dockerfile' \
+                --exclude='docker-compose.yml' \
+                ./ energy-forecasting-app/
+
           cd energy-forecasting-app
           
           git add .
