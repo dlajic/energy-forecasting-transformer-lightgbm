@@ -62,7 +62,7 @@ st.info(
 )
 
 
-# ============================== Session State Init ==============================
+# ============================== Session State Init ===============================
 def init_session_state():
     defaults = {
         "is_running": False,
@@ -83,7 +83,7 @@ def init_session_state():
 init_session_state()
 
 
-# ============================== Loaders ==============================
+# ============================== Loaders Cache ==============================
 @st.cache_data
 def load_cached_lightgbm_model():
     return load_lightgbm_model()

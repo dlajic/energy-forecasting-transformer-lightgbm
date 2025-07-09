@@ -33,7 +33,6 @@ jobs:
                 ./transformer_model/scripts \
                 requirements.txt \
                 setup.py \
-                README.md \
                 energy-forecasting-app/
 
           cd energy-forecasting-app
@@ -48,4 +47,4 @@ jobs:
           if git diff --quiet; then
             echo "No changes to push – skipping."
             exit 0
-          fi
+          fi 
