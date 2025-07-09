@@ -27,8 +27,8 @@ jobs:
           git clone https://dlaj:$HF_TOKEN@huggingface.co/spaces/dlaj/energy-forecasting-app
           
               rsync -av \
-                .streamlit/ \
-                streamlit_simulation/ \
+                .streamlit \
+                streamlit_simulation \
                 lightgbm_model/scripts \
                 transformer_model/scripts \
                 requirements.txt \
