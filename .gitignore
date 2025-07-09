@@ -14,3 +14,6 @@ dist/
 .ipynb_checkpoints/
 
 .env
+
+# Modelle ausschließen
+**/*.pth
