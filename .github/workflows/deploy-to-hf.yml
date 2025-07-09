@@ -31,7 +31,6 @@ jobs:
                 streamlit_simulation \
                 ./lightgbm_model/scripts \
                 ./transformer_model/scripts \
-                ./scripts/utils \
                 requirements.txt \
                 setup.py \
                 README.md \

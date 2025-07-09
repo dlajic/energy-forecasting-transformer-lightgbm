@@ -1,4 +1,4 @@
-from scripts.utils.env import use_dummy
+from streamlit_simulation.utils.env import use_dummy
 from transformer_model.scripts.config_transformer import FORECAST_HORIZON
 from transformer_model.scripts.utils.informer_dataset_class import \
     InformerDataset
@@ -6,7 +6,8 @@ from transformer_model.scripts.utils.load_final_model import \
     load_real_transformer_model
 
 try:
-    from scripts.utils.dummy import DummyDataset, DummyTransformerModel
+    from streamlit_simulation.utils.dummy import (DummyDataset,
+                                                  DummyTransformerModel)
 except ImportError:
     DummyTransformerModel = None
     DummyDataset = None
