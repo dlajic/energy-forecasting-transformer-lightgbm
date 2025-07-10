@@ -4,6 +4,8 @@ This project focuses on forecasting urban energy consumption based solely on his
 
 The project also simulates a real-time setting, where hourly predictions are made sequentially to mirror operational deployment. The modular design allows for adaptation to other urban contexts, assuming a compatible data structure.
 
+Code quality checks, automated testing, and continuous deployment to Hugging Face Spaces are integrated via GitHub Actions.
+
 ---
 
 ## Overview
@@ -190,21 +192,21 @@ temperature      # hourly
 
 ## CI/CD & DevOps Setup
 
-This project includes a lightweight CI pipeline using GitHub Actions:
+This project includes a lightweight CI/CD pipeline using GitHub Actions:
 
-* **CI**:  
+### Continuous Integration CI  
   - Runs `pytest` on every push  
   - Builds and validates the Docker image
 
-* **Code quality checks**:  
+### Code quality checks  
   - Uses `pre-commit` hooks with `black`, `isort`, and `ruff`  
   - Ensures consistent formatting and linting before commits
 
-To enable pre-commit locally:
+### Continuous Deployment (CD) to Hugging Face Spaces
 
-```bash
-pre-commit install
-```
+  - On every push, selected project files are synced to the Hugging Face Space.
+  - Only the necessary scripts, models, configs, and dependencies are included.
+  - The Hugging Face app automatically rebuilds and deploys on updates. 
 
 ---
 
