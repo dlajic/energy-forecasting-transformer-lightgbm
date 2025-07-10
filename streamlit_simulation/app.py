@@ -1,3 +1,4 @@
+import os
 import time
 import warnings
 
@@ -8,6 +9,7 @@ import pandas as pd
 import streamlit as st
 import torch
 from config_streamlit import DATA_PATH, PLOT_COLOR, TRAIN_RATIO
+from huggingface_hub import hf_hub_download
 
 from lightgbm_model.scripts.config_lightgbm import FEATURES
 from lightgbm_model.scripts.model_loader_wrapper import load_lightgbm_model
@@ -84,6 +86,21 @@ init_session_state()
 
 
 # ============================== Loaders Cache ==============================
+HF_REPO = "dlaj/energy-forecasting-files"
+HF_FILENAME = "data/processed/energy_consumption_aggregated_cleaned.csv"
+
+# if local data, use them, if not, download from huggingface
+if os.path.exists(DATA_PATH):
+    CSV_PATH = DATA_PATH
+else:
+    CSV_PATH = hf_hub_download(
+        repo_id=HF_REPO,
+        filename=HF_FILENAME,
+        repo_type="dataset",
+        cache_dir="hf_cache",  # Optional
+    )
+
+
 @st.cache_data
 def load_cached_lightgbm_model():
     return load_lightgbm_model()
@@ -449,7 +466,7 @@ if model_choice == "Transformer Model (moments)":
             len(InformerDataset(data_split="train", forecast_horizon=FORECAST_HORIZON))
             + SEQ_LEN
         )
-        base_timestamp = pd.read_csv(DATA_PATH, parse_dates=["date"])["date"].iloc[
+        base_timestamp = pd.read_csv(CSV_PATH, parse_dates=["date"])["date"].iloc[
             test_start_idx
         ]  # get original timestamp for later, cause not in dataset anymore
 
