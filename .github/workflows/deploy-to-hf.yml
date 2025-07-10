@@ -1,0 +1,55 @@
+name: Deploy to Hugging Face
+
+on:
+  push:
+    branches:
+      - main  # oder dein gewünschter Branch 
+      - devops-docker
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Install Git
+        run: sudo apt-get install git -y
+
+      - name: Push to Hugging Face Space
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          git config --global user.email "dean.lajic@web.de"
+          git config --global user.name "dlaj"
+          
+          git clone https://dlaj:$HF_TOKEN@huggingface.co/spaces/dlaj/energy-forecasting-app
+          
+              rsync -av --relative \
+                .streamlit \
+                streamlit_simulation \
+                ./lightgbm_model/scripts \
+                ./transformer_model/scripts \
+                requirements.txt \
+                setup.py \
+                README_HF.md \
+                energy-forecasting-app/
+
+          # Rename inside target dir
+          mv energy-forecasting-app/README_HF.md energy-forecasting-app/README.md
+
+          cd energy-forecasting-app
+          
+          git add .
+          git commit -m "Deploy from GitHub"
+          git push
+        
+      - name: Skip if no changes
+        run: |
+          cd energy-forecasting-app
+          if git diff --quiet; then
+            echo "No changes to push – skipping."
+            exit 0
+          fi
+ 

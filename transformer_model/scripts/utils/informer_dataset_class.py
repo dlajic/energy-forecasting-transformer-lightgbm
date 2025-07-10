@@ -1,13 +1,31 @@
 # informer_dataset.py
-
 import logging
-import pandas as pd
-import numpy as np
-from sklearn.preprocessing import StandardScaler
+import os
 from typing import Optional
-from transformer_model.scripts.config_transformer import SEQ_LEN, DATA_PATH
+
+import numpy as np
+import pandas as pd
+from huggingface_hub import hf_hub_download
+from sklearn.preprocessing import StandardScaler
+
+from transformer_model.scripts.config_transformer import DATA_PATH, SEQ_LEN
 
 logging.basicConfig(level=logging.INFO)
+
+HF_REPO = "dlaj/energy-forecasting-files"
+HF_FILENAME = "data/processed/energy_consumption_aggregated_cleaned.csv"
+
+if os.path.exists(DATA_PATH):
+    print(f"Lokale Datei gefunden: {DATA_PATH}")
+    CSV_PATH = DATA_PATH
+else:
+    print("Lokale Datei NICHT gefunden! Lade von Hugging Face...")
+    CSV_PATH = hf_hub_download(
+        repo_id=HF_REPO,
+        filename=HF_FILENAME,
+        repo_type="dataset",
+        cache_dir="hf_cache",  # Optional
+    )
 
 
 class InformerDataset:
@@ -36,7 +54,7 @@ class InformerDataset:
 
         self.seq_len = SEQ_LEN
         self.forecast_horizon = forecast_horizon
-        self.full_file_path_and_name = DATA_PATH
+        self.full_file_path_and_name = CSV_PATH
         self.data_split = data_split
         self.data_stride_len = data_stride_len
         self.task_name = task_name
@@ -53,8 +71,8 @@ class InformerDataset:
         test_start = train_end - self.seq_len
         test_end = test_start + n_test + self.seq_len
 
-        #logging.info(f"Train range: 0 to {train_end}")
-        #logging.info(f"Test range: {test_start} to {test_end}")
+        # logging.info(f"Train range: 0 to {train_end}")
+        # logging.info(f"Test range: {test_start} to {test_end}")
 
         return slice(0, train_end), slice(test_start, test_end)
 
@@ -81,9 +99,9 @@ class InformerDataset:
 
         self.length_timeseries = self.data.shape[0]
 
-        #logging.info(f"{self.data_split.capitalize()} set loaded.")
-        #logging.info(f"Time series length: {self.length_timeseries}")
-        #logging.info(f"Number of features: {self.n_channels}")
+        # logging.info(f"{self.data_split.capitalize()} set loaded.")
+        # logging.info(f"Time series length: {self.length_timeseries}")
+        # logging.info(f"Number of features: {self.n_channels}")
 
     def __getitem__(self, index):
         seq_start = self.data_stride_len * index

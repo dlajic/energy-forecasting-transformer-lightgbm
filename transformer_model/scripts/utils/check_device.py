@@ -1,10 +1,13 @@
-import torch
 import importlib
 import subprocess
 import sys
 
+import torch
+
+
 def install_package(package_name):
     subprocess.check_call([sys.executable, "-m", "pip", "install", package_name])
+
 
 def check_device():
     # **Check for NVIDIA GPU (CUDA)**
@@ -46,6 +49,7 @@ def check_device():
         scaler = None  # No scaler needed for AMD/CPU
 
     return device, backend, scaler
+
 
 if __name__ == "__main__":
     device, backend, scaler = check_device()

@@ -1,9 +1,11 @@
 # plot_metrics.py
 
-import os
 import json
-import pandas as pd
+import os
+
 import matplotlib.pyplot as plt
+import pandas as pd
+
 from transformer_model.scripts.config_transformer import RESULTS_DIR
 
 # === Plot 1: Training Metrics ===
@@ -18,7 +20,9 @@ test_mses = metrics["test_mses"]
 test_maes = metrics["test_maes"]
 
 plt.figure(figsize=(10, 6))
-plt.plot(range(1, len(train_losses) + 1), train_losses, label="Train Loss", color="blue")
+plt.plot(
+    range(1, len(train_losses) + 1), train_losses, label="Train Loss", color="blue"
+)
 plt.plot(range(1, len(test_mses) + 1), test_mses, label="Test MSE", color="red")
 plt.plot(range(1, len(test_maes) + 1), test_maes, label="Test MAE", color="green")
 plt.xlabel("Epoch")
@@ -40,8 +44,19 @@ comparison_path = os.path.join(RESULTS_DIR, "test_results.csv")
 df_comparison = pd.read_csv(comparison_path, parse_dates=["Timestamp"])
 
 plt.figure(figsize=(15, 6))
-plt.plot(df_comparison["Timestamp"], df_comparison["True Consumption (MW)"], label="True", color="darkblue")
-plt.plot(df_comparison["Timestamp"], df_comparison["Predicted Consumption (MW)"], label="Predicted", color="red", linestyle="--")
+plt.plot(
+    df_comparison["Timestamp"],
+    df_comparison["True Consumption (MW)"],
+    label="True",
+    color="darkblue",
+)
+plt.plot(
+    df_comparison["Timestamp"],
+    df_comparison["Predicted Consumption (MW)"],
+    label="Predicted",
+    color="red",
+    linestyle="--",
+)
 plt.title("Energy Consumption: Predictions vs Ground Truth")
 plt.xlabel("Time")
 plt.ylabel("Consumption (MW)")
@@ -59,11 +74,25 @@ plt.show()
 
 first_month_start = df_comparison["Timestamp"].min()
 first_month_end = first_month_start + pd.Timedelta(days=25)
-df_first_month = df_comparison[(df_comparison["Timestamp"] >= first_month_start) & (df_comparison["Timestamp"] <= first_month_end)]
+df_first_month = df_comparison[
+    (df_comparison["Timestamp"] >= first_month_start)
+    & (df_comparison["Timestamp"] <= first_month_end)
+]
 
 plt.figure(figsize=(15, 6))
-plt.plot(df_first_month["Timestamp"], df_first_month["True Consumption (MW)"], label="True", color="darkblue")
-plt.plot(df_first_month["Timestamp"], df_first_month["Predicted Consumption (MW)"], label="Predicted", color="red", linestyle="--")
+plt.plot(
+    df_first_month["Timestamp"],
+    df_first_month["True Consumption (MW)"],
+    label="True",
+    color="darkblue",
+)
+plt.plot(
+    df_first_month["Timestamp"],
+    df_first_month["Predicted Consumption (MW)"],
+    label="Predicted",
+    color="red",
+    linestyle="--",
+)
 plt.title("Energy Consumption (First Month): Predictions vs Ground Truth")
 plt.xlabel("Time")
 plt.ylabel("Consumption (MW)")

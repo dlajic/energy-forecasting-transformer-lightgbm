@@ -4,6 +4,8 @@ This project focuses on forecasting urban energy consumption based solely on his
 
 The project also simulates a real-time setting, where hourly predictions are made sequentially to mirror operational deployment. The modular design allows for adaptation to other urban contexts, assuming a compatible data structure.
 
+Code quality checks, automated testing, and continuous deployment to Hugging Face Spaces are integrated via GitHub Actions.
+
 ---
 
 ## Overview
@@ -73,7 +75,7 @@ More plots are available in the respective `/results` directories.
 You can try the model predictions interactively in the Streamlit dashboard:
 
 **Try it here:**
-**[Launch Streamlit App](https://huggingface.co/spaces/dlaj/energy-forecasting-demo)**
+**[Launch Streamlit App](https://huggingface.co/spaces/dlaj/energy-forecasting-app)**
 
 **Preview:**
 
@@ -188,6 +190,26 @@ temperature      # hourly
 
 ---
 
+## CI/CD & DevOps Setup
+
+This project includes a lightweight CI/CD pipeline using GitHub Actions:
+
+### Continuous Integration CI  
+  - Runs `pytest` on every push  
+  - Builds and validates the Docker image
+
+### Code quality checks  
+  - Uses `pre-commit` hooks with `black`, `isort`, and `ruff`  
+  - Ensures consistent formatting and linting before commits
+
+### Continuous Deployment (CD) to Hugging Face Spaces
+
+  - On every push, selected project files are synced to the Hugging Face Space.
+  - Only the necessary scripts, models, configs, and dependencies are included.
+  - The Hugging Face app automatically rebuilds and deploys on updates. 
+
+---
+
 ## Run Locally
 
 ### Prerequisites
@@ -235,6 +257,27 @@ For editable install:
 ```bash
 pip install -e .
 ```
+
+## Run App with Docker
+
+This project also supports containerized execution using Docker:
+
+
+```bash
+# Start app with Docker Compose (Linux)
+./start.sh
+
+# Or on Windows (PowerShell)
+./start.ps1
+```
+
+Make sure Docker (Docker-Desktop) is running before executing the script.
+
+This will:
+
+1. Build the Docker image
+2. Start the Streamlit app on localhost:8501
+3. Open it automatically in your browser
 
 ---
 

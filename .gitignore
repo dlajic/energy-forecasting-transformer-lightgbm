@@ -12,3 +12,8 @@ dist/
 
 # Notebook-Checkpoints
 .ipynb_checkpoints/
+
+.env
+
+# Modelle ausschließen
+**/*.pth
