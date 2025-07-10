@@ -73,7 +73,7 @@ More plots are available in the respective `/results` directories.
 You can try the model predictions interactively in the Streamlit dashboard:
 
 **Try it here:**
-**[Launch Streamlit App](https://huggingface.co/spaces/dlaj/energy-forecasting-demo)**
+**[Launch Streamlit App](https://huggingface.co/spaces/dlaj/energy-forecasting-app)**
 
 **Preview:**
 
