@@ -2,9 +2,14 @@ name: Deploy to Hugging Face
 
 on:
   push:
-    branches:
-      - main  # oder dein gewünschter Branch 
-      - devops-docker
+    branches: [main, devops-docker]
+    paths:
+      - 'streamlit_simulation/**'
+      - 'lightgbm_model/**'
+      - 'transformer_model/**'
+      - 'requirements.txt'
+      - 'setup.py'
+      - '.streamlit/**'
 
 jobs:
   deploy:
