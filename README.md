@@ -11,7 +11,7 @@ Code quality checks, automated testing, and continuous deployment to Hugging Fac
 ## Overview
 
 * **Goal**: Predict hourly energy consumption using timestamp, temperature, and historical consumption features.
-* **Models**: LightGBM and Time Series Transformer Model (moements).
+* **Models**: LightGBM and Time Series Transformer Model (moments).
 * **Results**: Both models perform well; LightGBM achieves the best overall performance.
 * **Dashboard**: Live forecast simulation via Streamlit interface.
 * **Usage Context**: Developed as a prototype for real-time hourly forecasting, with a modular structure that supports adaptation to similar operational settings.
